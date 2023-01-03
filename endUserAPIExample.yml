@@ -1,0 +1,403 @@
+swagger: "2.0"
+info:
+  description: "Sample Logik.io End User API Definition"
+  version: "1.0.0"
+  title: "Logik Configurator Runtime APIs"
+  contact:
+    email: "support@logik.io"
+host: "company.test.logik.io"
+basePath: "/api"
+tags:
+  - name: "Logik API Documentation"
+    description: "Logik APIs for native/custom UI/headless usage"
+  - name: "Configuration"
+    description: "APIs to operate on Configuration blueprint to generate BOM"
+  - name: "BOM"
+    description: "APIs to retrieve BOM information"
+schemes:
+  - "https"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - "Configuration"
+      summary: "Initialize a new Configuration"
+      description: ""
+      operationId: "initConfig"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Configurable Product Object to initialize"
+          required: true
+          schema:
+            $ref: "#/definitions/InitConfig"
+      responses:
+        "200":
+          description: "Return initial state of fields, messages and products"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /{uuid}:
+    patch:
+      security:
+        - Bearer: []
+      tags:
+        - "Configuration"
+      summary: "Update/Save Configuration with the given uuid"
+      description: ""
+      operationId: "updateConfig"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "uuid"
+          required: true
+          type: "string"
+          description: "Unique Configuration ID Value"
+        - in: "body"
+          name: "body"
+          description: "Configurable Product Object to initialize"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateConfig"
+        - in: "query"
+          name: "delta"
+          required: false
+          type: "boolean"
+          description: "Delta true only retruns changed data. This is default behavior of the API"
+        - in: "query"
+          name: "save"
+          required: false
+          type: "boolean"
+          description: "Pass save parameter as true to save the Configuration and send BOM to connected application"
+      responses:
+        "200":
+          description: "Return initial state of fields, messages and products"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        "400":
+          description: "Returns Error Message from the server "
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        "500":
+          description: "Returns Error Message from the server "
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - "Configuration"
+      summary: "Get Configuration with the given uuid"
+      description: ""
+      operationId: "getConfig"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "uuid"
+          required: true
+          type: "string"
+          description: "Unique Configuration ID Value"
+      responses:
+        "200":
+          description: "Return initial state of fields, messages and products"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        "400":
+          description: "Returns Error Message from the server if invalid uuid"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /{uuid}/bom/sales:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - "BOM"
+      summary: "Get Sales BOM with the given uuid for current state of Configuration"
+      description: ""
+      operationId: "getSalesBOM"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "uuid"
+          required: true
+          type: "string"
+          description: "Unique Configuration ID Value"
+        - in: "query"
+          name: "page"
+          required: false
+          type: "integer"
+          description: "Page number of data to be returned in response"
+        - in: "query"
+          name: "limit"
+          required: false
+          type: "integer"
+          description: "Size of Paged Data"
+        - in: "query"
+          name: "sort"
+          required: false
+          type: "string"
+          description: "Specify property and order{asc|desc} of sort in format field,asc[desc]"
+      responses:
+        "200":
+          description: "Return Sales BOM snapshot of Configuration"
+          schema:
+            $ref: "#/definitions/BOMResponse"
+        "400":
+          description: "Returns Error Message from the server if invalid uuid"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /{uuid}/bom/manufacturing:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - "BOM"
+      summary: "Get Manufacturing BOM with the given uuid for current state of Configuration"
+      description: ""
+      operationId: "getManufacturingBOM"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "uuid"
+          required: true
+          type: "string"
+          description: "Unique Configuration ID Value"
+        - in: "query"
+          name: "page"
+          required: false
+          type: "integer"
+          description: "Page number of data to be returned in response"
+        - in: "query"
+          name: "limit"
+          required: false
+          type: "integer"
+          description: "Size of Paged Data"
+        - in: "query"
+          name: "sort"
+          required: false
+          type: "string"
+          description: "Specify property and order{asc|desc} of sort in format field,asc[desc]"
+      responses:
+        "200":
+          description: "Return Manufacturing BOM snapshot of Configuration"
+          schema:
+            $ref: "#/definitions/BOMResponse"
+        "400":
+          description: "Returns Error Message from the server if invalid uuid"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /{uuid}/bom/all:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - "BOM"
+      summary: "Get Entire BOM with the given uuid for current state of Configuration"
+      description: ""
+      operationId: "getAllBOM"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "uuid"
+          required: true
+          type: "string"
+          description: "Unique Configuration ID Value"
+        - in: "query"
+          name: "page"
+          required: false
+          type: "integer"
+          description: "Page number of data to be returned in response"
+        - in: "query"
+          name: "limit"
+          required: false
+          type: "integer"
+          description: "Size of Paged Data"
+        - in: "query"
+          name: "sort"
+          required: false
+          type: "string"
+          description: "Specify property and order{asc|desc} of sort in format field,asc[desc]"
+      responses:
+        "200":
+          description: "Return Entire BOM snapshot of Configuration"
+          schema:
+            $ref: "#/definitions/BOMResponse"
+        "400":
+          description: "Returns Error Message from the server if invalid uuid"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+definitions:
+  ErrorResponse:
+    type: "object"
+    properties: { errorMessage: { type: "string" } }
+  FieldPayload:
+    type: "object"
+    properties: { variableName: { type: "string" }, value: { type: "string" } }
+  UpdateConfig:
+    type: "object"
+    properties:
+      {
+        fields:
+          { type: "array", items: { $ref: "#/definitions/FieldPayload" } },
+      }
+  InitConfig:
+    type: "object"
+    properties:
+      {
+        sessionContext:
+          { type: "object", properties: { stateful: { type: "boolean" } } },
+        partnerData:
+          {
+            type: "object",
+            properties:
+              {
+                product:
+                  {
+                    type: "object",
+                    properties: { configuredProductId: { type: "string" } },
+                  },
+              },
+            required: ["product"],
+          },
+        fields:
+          { type: "array", items: { $ref: "#/definitions/FieldPayload" } },
+      }
+  BOMResponse:
+    type: "object"
+    properties:
+      {
+        products: { type: "array", items: { $ref: "#/definitions/Product" } },
+        pageable:
+          {
+            type: "object",
+            properties:
+              {
+                sort:
+                  {
+                    type: "object",
+                    properties:
+                      {
+                        empty: { type: "boolean" },
+                        sorted: { type: "boolean" },
+                        unsorted: { type: "boolean" },
+                      },
+                  },
+                offset: { type: "integer" },
+                pageNumber: { type: "integer" },
+                pageSize: { type: "integer" },
+                paged: { type: "boolean" },
+                unpaged: { type: "boolean" },
+              },
+          },
+        totalPages: { type: "integer" },
+        totalElements: { type: "integer" },
+        last: { type: "boolean" },
+        size: { type: "integer" },
+        number: { type: "integer" },
+        numberOfElements: { type: "integer" },
+        first: { type: "boolean" },
+        empty: { type: "boolean" },
+        total: { type: "integer" },
+      }
+  Product:
+    type: "object"
+    properties:
+      {
+        id: { type: "string" },
+        selectionType: { type: "string" },
+        quantity: { type: "integer" },
+        bomType: { type: "string" },
+        level: { type: "integer" },
+        parentProduct: { type: "integer" },
+        notes: { type: "string" },
+        uniqueIdentifier: { type: "integer" },
+        description: { type: "string" },
+        externalId: { type: "string" },
+        name: { type: "string" },
+        price: { type: "number" },
+        extPrice: { "type": "number" },
+      }
+  Field:
+    type: "object"
+    properties:
+      {
+        value: { type: "string" },
+        dataType: { "type": "string" },
+        visibilityState: { type: "string" },
+        editable: { type: "string" },
+        variableName: { type: "string" },
+        optionSet:
+          {
+            type: "object",
+            properties:
+              {
+                options:
+                  {
+                    type: "array",
+                    items:
+                      {
+                        type: "object",
+                        properties:
+                          {
+                            label: { type: "string" },
+                            state: { type: "string" },
+                            value: { type: "string" },
+                            imageUrl: { type: "string" },
+                            orderNumber: { "type": "integer" },
+                          },
+                        required: ["label", "state", "value", "orderNumber"],
+                      },
+                  },
+              },
+            required: ["options"],
+          },
+      }
+  Message:
+    type: "object"
+    properties:
+      {
+        message: { type: "string" },
+        type: { type: "string" },
+        error: { type: "boolean" },
+        field: { type: "string" },
+      }
+    required: ["message", "type", "error", "field"]
+  ApiResponse:
+    type: "object"
+    properties:
+      {
+        fields: { type: "array", items: { $ref: "#/definitions/Field" } },
+        uuid: { type: "string" },
+        revision: { type: "integer" },
+        valid: { type: "boolean" },
+        messages: { type: "array", items: { $ref: "#/definitions/Message" } },
+        productChange: { type: "boolean" },
+        products: { type: "array", items: { $ref: "#/definitions/Product" } },
+        layouts:
+          {
+            type: "array",
+            items:
+              {
+                type: "object",
+                properties: { url: { type: "string" } },
+                required: ["url"],
+              },
+          },
+      }

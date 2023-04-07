@@ -1,644 +1,651 @@
-swagger: '2.0'
+openapi: 3.0.1
 info:
-  description: Logik.io End User API Definition. Shows payload structure and schema, authroization approach and endpoint format
-  version: 2.0.0
   title: Logik Configurator Runtime APIs
+  description: Logik.io End User API Definition. Shows payload structure and schema, authroization approach and endpoint format. Can be used for custom UI or headless implementations.
   contact:
     email: support@logik.io
-host: <tenantName>.<sectorName>.logik.io
-basePath: /api
+  version: 2.0.0
+servers:
+- url: https://{tenantName}.{sectorName}.logik.io/api
+  variables:
+    tenantName:
+      default: demo
+      description: Customer ID assigned by the service provider
+    sectorName:
+      default: demo
+      description: Customer ID assigned by the service provider
 tags:
-  - name: Logik API Documentation
-    description: Logik APIs for native/custom UI/headless usage. Use your tenant and deployment sector  for exact endpoint base URL 
-  - name: Configuration
-    description: APIs to operate on Configuration blueprint to generate BOM
-  - name: BOM
-    description: APIs to retrieve BOM information
-schemes:
-  - https
-securityDefinitions:
-  Bearer:
-    type: apiKey
-    name: Authorization
-    in: header
+- name: Configuration
+  description: APIs to operate on Configuration blueprint to generate BOM
+- name: BOM
+  description: APIs to retrieve BOM information
 paths:
   /:
     post:
-      security:
-        - Bearer: []
       tags:
-        - Configuration
+      - Configuration
       summary: Initialize a new Configuration
-      description: ''
       operationId: initConfig
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: body
-          name: body
-          description: Configurable Product Object to initialize
-          required: true
-          schema:
-            $ref: '#/definitions/InitConfig'
+      requestBody:
+        description: Configurable Product Object to initialize
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitConfig'
+        required: true
       responses:
-        '200':
+        200:
           description: Return initial state of fields, messages and products
-          schema:
-            $ref: '#/definitions/ApiResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+      - BearerAuth: []
+      x-codegen-request-body-name: body
   /{uuid}:
-    patch:
-      security:
-        - Bearer: []
-      tags:
-        - Configuration
-      summary: Update/Save Configuration with the given uuid
-      description: ''
-      operationId: updateConfig
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: path
-          name: uuid
-          required: true
-          type: string
-          description: Unique Configuration ID Value
-        - in: body
-          name: body
-          description: Configurable Product Object to initialize
-          required: true
-          schema:
-            $ref: '#/definitions/UpdateConfig'
-        - in: query
-          name: delta
-          required: false
-          type: boolean
-          description: >-
-            Delta true only retruns changed data. This is default behavior of
-            the API
-        - in: query
-          name: save
-          required: false
-          type: boolean
-          description: >-
-            Pass save parameter as true to save the Configuration and send BOM
-            to connected application
-      responses:
-        '200':
-          description: Return initial state of fields, messages and products
-          schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
-          description: 'Returns Error Message from the server '
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: 'Returns Error Message from the server '
-          schema:
-            $ref: '#/definitions/ErrorResponse'
     get:
-      security:
-        - Bearer: []
       tags:
-        - Configuration
+      - Configuration
       summary: Get Configuration with the given uuid
-      description: ''
       operationId: getConfig
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: uuid
-          required: true
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
           type: string
-          description: Unique Configuration ID Value
       responses:
-        '200':
+        200:
           description: Return initial state of fields, messages and products
-          schema:
-            $ref: '#/definitions/ApiResponse'
-        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        400:
           description: Returns Error Message from the server if invalid uuid
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
+    patch:
+      tags:
+      - Configuration
+      summary: Update/Save Configuration with the given uuid
+      operationId: updateConfig
+      parameters:
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
+          type: string
+      - name: delta
+        in: query
+        description: Delta true only retruns changed data. This is default behavior
+          of the API
+        schema:
+          type: boolean
+      - name: save
+        in: query
+        description: Pass save parameter as true to save the Configuration and send
+          BOM to connected application
+        schema:
+          type: boolean
+      requestBody:
+        description: Configurable Product Object to initialize
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConfig'
+        required: true
+      responses:
+        200:
+          description: Return initial state of fields, messages and products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        400:
+          description: 'Returns Error Message from the server '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: 'Returns Error Message from the server '
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
+      x-codegen-request-body-name: body
   /{uuid}/sets/{setVariableName}:
     get:
-      security:
-        - Bearer: []
       tags:
-        - Configuration
-      summary: Access fields in a given Set. Use if Set flagged in relatedChanges param
-      description: ''
+      - Configuration
+      summary: Access fields in a given Set. Use if Set flagged in relatedChanges
+        param
       operationId: getSet
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: uuid
-          required: true
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
           type: string
-          description: Unique Configuration ID Value
-        - in: path
-          name: setVariableName
-          required: true
+      - name: setVariableName
+        in: path
+        description: Variable name of the Set defined in admin for which data is requested
+        required: true
+        schema:
           type: string
-          description: Variable name of the Set defined in admin for which data is requested
-        - in: query
-          name: page
-          required: false
+      - name: page
+        in: query
+        description: Page number of data to be returned in response
+        schema:
           type: integer
-          description: Page number of data to be returned in response
-        - in: query
-          name: limit
-          required: false
+      - name: limit
+        in: query
+        description: Size of Paged Data
+        schema:
           type: integer
-          description: Size of Paged Data
-        - in: query
-          name: sort
-          required: false
+      - name: sort
+        in: query
+        description: Specify property and order{asc|desc} of sort in format field,asc[desc]
+        schema:
           type: string
-          description: >-
-            Specify property and order{asc|desc} of sort in format
-            field,asc[desc]
       responses:
-        '200':
+        200:
           description: Paginated details for a given Set variable name
-          schema:
-            $ref: '#/definitions/SetsResponse'
-        '404':
-          description: Returns Error Message from the server if invalid uuid or set variable name
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetsResponse'
+        404:
+          description: Returns Error Message from the server if invalid uuid or set
+            variable name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /{uuid}/bom/sales:
     get:
-      security:
-        - Bearer: []
       tags:
-        - BOM
+      - BOM
       summary: Get Sales BOM with the given uuid for current state of Configuration
-      description: ''
       operationId: getSalesBOM
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: uuid
-          required: true
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
           type: string
-          description: Unique Configuration ID Value
-        - in: query
-          name: page
-          required: false
+      - name: page
+        in: query
+        description: Page number of data to be returned in response
+        schema:
           type: integer
-          description: Page number of data to be returned in response
-        - in: query
-          name: limit
-          required: false
+      - name: limit
+        in: query
+        description: Size of Paged Data
+        schema:
           type: integer
-          description: Size of Paged Data
-        - in: query
-          name: sort
-          required: false
+      - name: sort
+        in: query
+        description: Specify property and order{asc|desc} of sort in format field,asc[desc]
+        schema:
           type: string
-          description: >-
-            Specify property and order{asc|desc} of sort in format
-            field,asc[desc]
       responses:
-        '200':
+        200:
           description: Return Sales BOM snapshot of Configuration
-          schema:
-            $ref: '#/definitions/BOMResponse'
-        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BOMResponse'
+        400:
           description: Returns Error Message from the server if invalid uuid
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /{uuid}/bom/{custom}:
     get:
-      security:
-        - Bearer: []
       tags:
-        - BOM
+      - BOM
       summary: Get Custom BOM type line items defined in the admin
-      description: ''
       operationId: getCustomBOM
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: custom
-          required: true
+      - name: custom
+        in: path
+        description: Custom BOM Type name
+        required: true
+        schema:
           type: string
-          description: Custom BOM Type name
-        - in: path
-          name: uuid
-          required: true
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
           type: string
-          description: Unique Configuration ID Value
-        - in: query
-          name: page
-          required: false
+      - name: page
+        in: query
+        description: Page number of data to be returned in response
+        schema:
           type: integer
-          description: Page number of data to be returned in response
-        - in: query
-          name: limit
-          required: false
+      - name: limit
+        in: query
+        description: Size of Paged Data
+        schema:
           type: integer
-          description: Size of Paged Data
-        - in: query
-          name: sort
-          required: false
+      - name: sort
+        in: query
+        description: Specify property and order{asc|desc} of sort in format field,asc[desc]
+        schema:
           type: string
-          description: >-
-            Specify property and order{asc|desc} of sort in format
-            field,asc[desc]
       responses:
-        '200':
+        200:
           description: Return Sales BOM snapshot of Configuration
-          schema:
-            $ref: '#/definitions/BOMResponse'
-        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BOMResponse'
+        400:
           description: Returns Error Message from the server if invalid uuid
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /{uuid}/bom/manufacturing:
     get:
-      security:
-        - Bearer: []
       tags:
-        - BOM
-      summary: >-
-        Get Manufacturing BOM with the given uuid for current state of
-        Configuration
-      description: ''
+      - BOM
+      summary: Get Manufacturing BOM with the given uuid for current state of Configuration
       operationId: getManufacturingBOM
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: uuid
-          required: true
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
           type: string
-          description: Unique Configuration ID Value
-        - in: query
-          name: page
-          required: false
+      - name: page
+        in: query
+        description: Page number of data to be returned in response
+        schema:
           type: integer
-          description: Page number of data to be returned in response
-        - in: query
-          name: limit
-          required: false
+      - name: limit
+        in: query
+        description: Size of Paged Data
+        schema:
           type: integer
-          description: Size of Paged Data
-        - in: query
-          name: sort
-          required: false
+      - name: sort
+        in: query
+        description: Specify property and order{asc|desc} of sort in format field,asc[desc]
+        schema:
           type: string
-          description: >-
-            Specify property and order{asc|desc} of sort in format
-            field,asc[desc]
       responses:
-        '200':
+        200:
           description: Return Manufacturing BOM snapshot of Configuration
-          schema:
-            $ref: '#/definitions/BOMResponse'
-        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BOMResponse'
+        400:
           description: Returns Error Message from the server if invalid uuid
-          schema:
-            $ref: '#/definitions/ErrorResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /{uuid}/bom/:
     get:
-      security:
-        - Bearer: []
       tags:
-        - BOM
+      - BOM
       summary: Get Entire BOM with the given uuid for current state of Configuration
-      description: ''
       operationId: getAllBOM
-      produces:
-        - application/json
       parameters:
-        - in: path
-          name: uuid
-          required: true
+      - name: uuid
+        in: path
+        description: Unique Configuration ID Value
+        required: true
+        schema:
           type: string
-          description: Unique Configuration ID Value
-        - in: query
-          name: page
-          required: false
+      - name: page
+        in: query
+        description: Page number of data to be returned in response
+        schema:
           type: integer
-          description: Page number of data to be returned in response
-        - in: query
-          name: limit
-          required: false
+      - name: limit
+        in: query
+        description: Size of Paged Data
+        schema:
           type: integer
-          description: Size of Paged Data
-        - in: query
-          name: sort
-          required: false
+      - name: sort
+        in: query
+        description: Specify property and order{asc|desc} of sort in format field,asc[desc]
+        schema:
           type: string
-          description: >-
-            Specify property and order{asc|desc} of sort in format
-            field,asc[desc]
-        - in: query
-          name: bomType
-          required: false
+      - name: bomType
+        in: query
+        description: Pass comma separated list of bom types to be returned
+        schema:
           type: string
-          description: Pass comma separated list of bom types to be returned
       responses:
-        '200':
+        200:
           description: Return Entire BOM snapshot of Configuration
-          schema:
-            $ref: '#/definitions/BOMResponse'
-        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BOMResponse'
+        400:
           description: Returns Error Message from the server if invalid uuid
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-definitions:
-  ErrorResponse:
-    type: object
-    properties:
-      errorMessage:
-        type: string
-  FieldPayload:
-    type: object
-    properties:
-      variableName:
-        type: string
-      value:
-        type: string
-  UpdateConfig:
-    type: object
-    properties:
-      fields:
-        type: array
-        items:
-          $ref: '#/definitions/FieldPayload'
-  InitConfig:
-    type: object
-    properties:
-      sessionContext:
-        type: object
-        properties:
-          stateful:
-            type: boolean
-      partnerData:
-        type: object
-        properties:
-          product:
-            type: object
-            properties:
-              configuredProductId:
-                type: string
-                description: Product id of the Product linked to Logik Blueprint
-              configurationAttributes:
-                #Option. Used to pass Logik ConfigurationId for Reconfigure flow
-                type: object
-                properties:
-                  LGK__ConfigurationId__c:
-                    type: string
-                    description: Configuration Id which was generated for saved configuration
-        required:
-          - product
-          - configuredProductId
-      quote:
-        type: object
-        properties:
-          SBQQ__PricebookId__c:
-            type: string
-      fields:
-        type: array
-        items:
-          $ref: '#/definitions/FieldPayload'
-  BOMResponse:
-    type: object
-    properties:
-      products:
-        type: array
-        items:
-          $ref: '#/definitions/Product'
-      pageable:
-        type: object
-        properties:
-          sort:
-            type: object
-            properties:
-              empty:
-                type: boolean
-              sorted:
-                type: boolean
-              unsorted:
-                type: boolean
-          offset:
-            type: integer
-          pageNumber:
-            type: integer
-          pageSize:
-            type: integer
-          paged:
-            type: boolean
-          unpaged:
-            type: boolean
-      totalPages:
-        type: integer
-      totalElements:
-        type: integer
-      last:
-        type: boolean
-      size:
-        type: integer
-      number:
-        type: integer
-      numberOfElements:
-        type: integer
-      first:
-        type: boolean
-      empty:
-        type: boolean
-      total:
-        type: integer
-  Product:
-    type: object
-    properties:
-      id:
-        type: string
-      selectionType:
-        type: string
-      quantity:
-        type: integer
-      bomType:
-        type: string
-      level:
-        type: integer
-      parentProduct:
-        type: integer
-      notes:
-        type: string
-      uniqueIdentifier:
-        type: integer
-      description:
-        type: string
-      externalId:
-        type: string
-      name:
-        type: string
-      price:
-        type: number
-      extPrice:
-        type: number
-  Field:
-    type: object
-    properties:
-      value:
-        type: string
-      dataType:
-        type: string
-      visibilityState:
-        type: string
-      editable:
-        type: string
-      variableName:
-        type: string
-      optionSet:
-        type: object
-        properties:
-          options:
-            type: array
-            items:
-              type: object
-              properties:
-                label:
-                  type: string
-                state:
-                  type: string
-                value:
-                  type: string
-                imageUrl:
-                  type: string
-                orderNumber:
-                  type: integer
-              required:
-                - label
-                - state
-                - value
-                - orderNumber
-        required:
-          - options
-  Message:
-    type: object
-    properties:
-      message:
-        type: string
-      type:
-        type: string
-      error:
-        type: boolean
-      field:
-        type: string
-    required:
-      - message
-      - type
-      - error
-      - field
-  ApiResponse:
-    type: object
-    properties:
-      fields:
-        type: array
-        items:
-          $ref: '#/definitions/Field'
-      uuid:
-        type: string
-      revision:
-        type: integer
-      valid:
-        type: boolean
-      messages:
-        type: array
-        items:
-          $ref: '#/definitions/Message'
-      productChange:
-        type: boolean
-      products:
-        type: array
-        items:
-          $ref: '#/definitions/Product'
-      layouts:
-        type: array
-        items:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+    FieldPayload:
+      type: object
+      properties:
+        variableName:
+          type: string
+        value:
+          type: string
+    UpdateConfig:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldPayload'
+    InitConfig:
+      type: object
+      properties:
+        sessionContext:
           type: object
           properties:
-            url:
-              type: string
+            stateful:
+              type: boolean
+        partnerData:
           required:
+          - product
+          type: object
+          properties:
+            product:
+              type: object
+              properties:
+                configuredProductId:
+                  type: string
+                  description: Product id of the Product linked to Logik Blueprint
+                configurationAttributes:
+                  type: object
+                  properties:
+                    LGK__ConfigurationId__c:
+                      type: string
+                      description: Configuration Id which was generated for saved
+                        configuration
+        quote:
+          type: object
+          properties:
+            SBQQ__PricebookId__c:
+              type: string
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldPayload'
+    BOMResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        empty:
+          type: boolean
+        total:
+          type: integer
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        selectionType:
+          type: string
+        quantity:
+          type: integer
+        bomType:
+          type: string
+        level:
+          type: integer
+        parentProduct:
+          type: integer
+        notes:
+          type: string
+        uniqueIdentifier:
+          type: integer
+        description:
+          type: string
+        externalId:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        extPrice:
+          type: number
+    Field:
+      type: object
+      properties:
+        value:
+          type: string
+        dataType:
+          type: string
+        visibilityState:
+          type: string
+        editable:
+          type: string
+        variableName:
+          type: string
+        optionSet:
+          required:
+          - options
+          type: object
+          properties:
+            options:
+              type: array
+              items:
+                required:
+                - label
+                - orderNumber
+                - state
+                - value
+                type: object
+                properties:
+                  label:
+                    type: string
+                  state:
+                    type: string
+                  value:
+                    type: string
+                  imageUrl:
+                    type: string
+                  orderNumber:
+                    type: integer
+    Message:
+      required:
+      - error
+      - field
+      - message
+      - type
+      type: object
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+        error:
+          type: boolean
+        field:
+          type: string
+    ApiResponse:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+        uuid:
+          type: string
+        revision:
+          type: integer
+        valid:
+          type: boolean
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        productChange:
+          type: boolean
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        layouts:
+          type: array
+          items:
+            required:
             - url
-      relatedChanges:
-        type: array
-        items:
-          $ref: '#/definitions/relatedChangesValue'
-  relatedChangesValue:
-    type: object
-    properties: 
-      key:
-        type: string
-      type:
-        type: string
-        description: Value of SET|PRODUCT which will return KEY value as variable name of set or static value products
-  SetsContent:
-    type: object
-    properties:
-      index:
-        type: integer
-      fields:
-        type: array
-        items:
-          $ref: '#/definitions/Field'
-  SetsResponse:
-    type: object
-    properties:
-      content:
-        type: array
-        items:
-          $ref: '#/definitions/SetsContent'
-      pageable:
-        type: object
-        properties:
-          sort:
             type: object
             properties:
-              empty:
-                type: boolean
-              sorted:
-                type: boolean
-              unsorted:
-                type: boolean
-          offset:
-            type: integer
-          pageNumber:
-            type: integer
-          pageSize:
-            type: integer
-          paged:
-            type: boolean
-          unpaged:
-            type: boolean
-      totalPages:
-        type: integer
-      totalElements:
-        type: integer
-      last:
-        type: boolean
-      size:
-        type: integer
-      number:
-        type: integer
-      numberOfElements:
-        type: integer
-      first:
-        type: boolean
-      empty:
-        type: boolean
-      total:
-        type: integer
+              url:
+                type: string
+        relatedChanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/relatedChangesValue'
+    relatedChangesValue:
+      type: object
+      properties:
+        key:
+          type: string
+        type:
+          type: string
+          description: Value of SET|PRODUCT which will return KEY value as variable
+            name of set or static value products
+    SetsContent:
+      type: object
+      properties:
+        index:
+          type: integer
+        fields:
+          type: array
+          items:
+            $ref: '#/components/schemas/Field'
+    SetsResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SetsContent'
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        empty:
+          type: boolean
+        total:
+          type: integer
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

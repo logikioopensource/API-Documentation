@@ -63,7 +63,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"sessionContext\": {\n    \"stateful\": true\n  },\n  \"partnerData\": {\n    \"product\": {\n      \"configuredProductId\": \"{{configProductId}}\"\n    }\n  },\n  \"fields\": []\n}",
+							"raw": "{\n    \"sessionContext\": {\n        \"stateful\": true\n    },\n    \"partnerData\": {\n        \"product\": {\n            \"configuredProductId\": \"{{configProductId}}\"\n        }\n    },\n    \"fields\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -78,7 +78,8 @@
 							"path": [
 								""
 							]
-						}
+						},
+						"description": "# Initialize a new Configuration\n\nStart a new Logik Configuration. Payload must include:\n\n```json\n\"partnerData\": {\n    \"product\": {\n        \"configuredProductId\": \"<configProductId>\"\n     }\n},\n```\n\nwhere `configProductId` is the Product Id of a Logik enabled configurable Product."
 					},
 					"response": [
 						{
@@ -364,7 +365,8 @@
 							"path": [
 								""
 							]
-						}
+						},
+						"description": "# Reconfigure existing Configuration\n\nUpdate an existing Logik configuration. Same endpoint as _Initialize a new Configuration_, but with the addition of:\n\n```json\n\"configurationAttributes\": {\n                \"LGK__ConfigurationId__c\": \"<uuid>\"\n            }\n```\n\nwhere `uuid` is an existing Logik Configuration Id."
 					},
 					"response": [
 						{
@@ -660,7 +662,8 @@
 									"value": "{{uuid}}"
 								}
 							]
-						}
+						},
+						"description": "# Update a Configuration\n\nPass an array of field objects to update specific variables in the configuration\n\n```json\n    \"fields\": [\n        {\n            \"variableName\": \"<var1>\",\n            \"value\": <var1val>\n        },\n        {\n            \"variableName\": \"<var2>\",\n            \"value\": <var2val>\n        }\n    ]\n```"
 					},
 					"response": [
 						{
@@ -1084,7 +1087,8 @@
 									"value": "{{uuid}}"
 								}
 							]
-						}
+						},
+						"description": "# Save Configuration\n\nSame endpoint as _Update a Configuration_ with query param `save=true`. Can pass either an empty payload or an array of field objects to update specific variables in the configuration"
 					},
 					"response": [
 						{
@@ -1353,7 +1357,8 @@
 									"description": "Logik UUID of configuration"
 								}
 							]
-						}
+						},
+						"description": "# Get a Configuration\n\nGet an existing Logik configuration. If data needs to be changed, use the _Reconfigure existing Configuration_ API call instead"
 					},
 					"response": [
 						{
@@ -2134,7 +2139,7 @@
 			"name": "Layout APIs",
 			"item": [
 				{
-					"name": "Get Layout",
+					"name": "Get End User Layout",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -2153,7 +2158,7 @@
 					},
 					"response": [
 						{
-							"name": "Get Layout",
+							"name": "Get End User Layout",
 							"originalRequest": {
 								"method": "GET",
 								"header": [
@@ -2272,7 +2277,11 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					""
+					"let baseUrl = pm.collectionVariables.get('baseUrl');",
+					"if(baseUrl.endsWith('/')) {",
+					"    baseUrl = baseUrl.slice(0, -1) ",
+					"    pm.collectionVariables.set('baseUrl', baseUrl);",
+					"}"
 				]
 			}
 		},

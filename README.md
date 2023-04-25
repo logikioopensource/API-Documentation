@@ -2,6 +2,8 @@
 
  The goal of this repository and the content is to provide a fast start for developers exploring or working with the Logik APIs. The aim is to keep this as complete and up to date as possible, but exhaustiveness and absolute correctness is not guaranteed.
 
+ For more detailed information see the [Logik&period;io Support Portal](https://logikio3.my.site.com/s/article/Logik-io-Runtime-APIs)
+
 ## Logik&period;io Runtime APIs
 
 Logik&period;io provides a set of APIs for building front end applications and manipulating configurations. These are commonly referred to as “buyside” or “runtime” APIs that are used by customers or end users to create, update and save Logik configurations.
@@ -51,19 +53,19 @@ The majority of the Postman API calls have scripts in the "Tests" tab of the req
 
 #### Postman Configuration
 
-![postmanImport](/docs/postman/postmanImport.png)
+![postmanImport](./docs/postman/postmanImport.png)
 
 1. To import the Postman Collection, click "Import"
 
-![postmanImportSelect](/docs/postman/postmanImportSelect.png)
+![postmanImportSelect](./docs/postman/postmanImportSelect.png)
 
 1. In the import modal, click "Upload Files" to select the Postman Collection to import
 
-![postmanImportfinal](/docs/postman/postmanImportFinal.png)
+![postmanImportfinal](./docs/postman/postmanImportFinal.png)
 
 1. To confirm the import of the collection, click "Import"
 
-![PostmanVariables](/docs/postman/postmanVarConfig.png)
+![PostmanVariables](./docs/postman/postmanVarConfig.png)
 
 There are 4 variables (`baseUrl`, `runtimeToken`, `origin`, `configProductId`) that are required to be set to start using the postman collection. The last 2 variables (`uuid`, `layoutUrl`) that can be set automatically when running the requests for use in subsequent requests, or set to a specific value for testing.
 
@@ -81,6 +83,8 @@ There are 4 variables (`baseUrl`, `runtimeToken`, `origin`, `configProductId`) t
 1. Finally after setting at least the `baseUrl`, `runtimeToken`, `origin`, and `configProductId` variables, Save to persist the changes
 
 Now the Postman Collection should be configured to make requests to your Logik Instance
+
+For using each of the APIs, please see the [Logik.io Support site for detailed Runtime API documentation](https://logikio3.my.site.com/s/article/Logik-io-Runtime-APIs)
 
 ### Swagger (OpenAPI) Documentation
 
@@ -105,28 +109,30 @@ Swagger provides a free online editor that can be used for exploring an OpenAPI 
 
 #### Swagger Setup
 
-![swaggerImport](/docs/swagger/swaggerImport.png)
+![swaggerImport](./docs/swagger/swaggerImport.png)
 
 1. To get started navigate to the Swagger Editor, at the top click the dropdown for "File".
 1. Select "Import File" to import the yml file provided in this repo.
 
-![swaggerConfig](/docs/swagger/swaggerConfig.png)
+![swaggerConfig](./docs/swagger/swaggerConfig.png)
 
 1. Ensure that the yml file was correctly imported into the editor window
 1. `tenantName` -  is the Logik tenant of your instance, which will be specific to your deployment
 1. `sectorName` - is the Logik Sector of your instance, generally `test` or `prod`
 1. Finally you will need to authorize with the Runtime Token created in [Logik Config](#logik-configuration). Click "Authorize" to launch the authorization modal.
 
-![swaggerAuth](/docs/swagger/swaggerAuth.png)
+![swaggerAuth](./docs/swagger/swaggerAuth.png)
 
 1. Enter the value of the runtime token that was generated in [Logik Config](#logik-configuration), ensure that the origin is correct for the URL in the browser: `https://editor.swagger.io/`
 1. Save the Runtime Token by clicking the "Authorize" button
 
 Now the Swagger Editor should be configured to make requests to your Logik Instance
 
+For using each of the APIs, please see the [Logik.io Support site for detailed Runtime API documentation](https://logikio3.my.site.com/s/article/Logik-io-Runtime-APIs)
+
 ### Additional Resources
 
-- [Logik.io Support site for detailed Runtime API documentation](https://logikio3.my.site.com/s/article/Intro-to-API-Calls)
+- [Logik.io Support site for detailed Runtime API documentation](https://logikio3.my.site.com/s/article/Logik-io-Runtime-APIs)
 - [Postman API Client](https://www.postman.com/)
 - [Swagger Editor](https://editor.swagger.io/)
 - [OpenAPI Specification](https://swagger.io/specification/)

@@ -1,0 +1,2329 @@
+{
+	"info": {
+		"_postman_id": "2f7893db-0355-49fc-af46-6a817e363c4d",
+		"name": "Logik Configurator Runtime APIs",
+		"description": "Logik.io Runtime API Documentation\n\nContact Support:\n Email: support@logik.io",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Configuration APIs",
+			"item": [
+				{
+					"name": "Initialize a new Configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//parse the response JSON",
+									"const responseJson = pm.response.json();",
+									"if(responseJson.errorMessage) {",
+									"    console.error(pm.response.status, responseJson.errorMessage);",
+									"}",
+									"",
+									"pm.test(\"Status code is 200\",  () => {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The response has valid uuid\", () => {",
+									"    pm.expect(responseJson.uuid).to.be.a('string');",
+									"    pm.expect(responseJson.uuid).to.have.lengthOf(36);",
+									"    console.log(\"uuid\", responseJson.uuid)",
+									"    pm.collectionVariables.set(\"uuid\", responseJson.uuid);",
+									"});",
+									"",
+									"pm.test(\"The response has at least one layout\", () => {",
+									"    pm.expect(responseJson.layouts).to.be.an('array');",
+									"    pm.expect(responseJson.layouts.length).to.be.greaterThan(0);",
+									"    pm.collectionVariables.set(\"layoutUrl\", responseJson.layouts[0].url);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sessionContext\": {\n        \"stateful\": true\n    },\n    \"partnerData\": {\n        \"product\": {\n            \"configuredProductId\": \"{{configProductId}}\"\n        }\n    },\n    \"fields\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "# Initialize a new Configuration\n\nStart a new Logik Configuration. Payload must include:\n\n```json\n\"partnerData\": {\n    \"product\": {\n        \"configuredProductId\": \"<configProductId>\"\n     }\n},\n```\n\nwhere `configProductId` is the Product Id of a Logik enabled configurable Product."
+					},
+					"response": [
+						{
+							"name": "Initialize a new Configuration - Minimal",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"sessionContext\": {\n    \"stateful\": true\n  },\n  \"partnerData\": {\n    \"product\": {\n      \"configuredProductId\": \"01t5f000003w24zAAA\"\n    }\n  },\n  \"fields\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2803"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 15:13:34 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\",\n    \"revision\": 0,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 0,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 0,\n            \"level\": 0,\n            \"rollUpPrice\": 0\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 0,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 0,\n            \"level\": 0,\n            \"rollUpPrice\": 0\n        }\n    ],\n    \"total\": 0,\n    \"layouts\": [\n        {\n            \"url\": \"/blueprints/138/revisions/LATEST/layouts/1\",\n            \"label\": \"amfb\",\n            \"variableName\": \"amendFlow_amfb\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "Initialize a new Configuration - with Fields",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sessionContext\": {\n        \"stateful\": true\n    },\n    \"partnerData\": {\n        \"product\": {\n            \"configuredProductId\": \"01t5f000003w24zAAA\"\n        }\n    },\n    \"fields\": [\n        {\n            \"variableName\": \"orderQty\",\n            \"value\": 6\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2809"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:05:49 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 6\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"a298f0b7-fb28-4b6a-a24f-aced32ff46a2\",\n    \"revision\": 0,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 6,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 600,\n            \"level\": 0,\n            \"rollUpPrice\": 600\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 0,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 0,\n            \"level\": 0,\n            \"rollUpPrice\": 0\n        }\n    ],\n    \"total\": 600,\n    \"layouts\": [\n        {\n            \"url\": \"/blueprints/138/revisions/LATEST/layouts/1\",\n            \"label\": \"amfb\",\n            \"variableName\": \"amendFlow_amfb\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Reconfigure existing Configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//parse the response JSON",
+									"const responseJson = pm.response.json();",
+									"if(responseJson.errorMessage) {",
+									"    console.error(pm.response.status, responseJson.errorMessage);",
+									"}",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The response has valid uuid\", () => {",
+									"    pm.expect(responseJson.uuid).to.be.a('string');",
+									"    pm.expect(responseJson.uuid).to.have.lengthOf(36);",
+									"    console.log(\"uuid\", responseJson.uuid)",
+									"    pm.collectionVariables.set(\"uuid\", responseJson.uuid);",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sessionContext\": {\n        \"stateful\": true\n    },\n    \"partnerData\": {\n        \"product\": {\n            \"configuredProductId\": \"{{configProductId}}\",\n            \"configurationAttributes\": {\n                \"LGK__ConfigurationId__c\": \"{{uuid}}\"\n            }\n        }\n    },\n    \"fields\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "# Reconfigure existing Configuration\n\nUpdate an existing Logik configuration. Same endpoint as _Initialize a new Configuration_, but with the addition of:\n\n```json\n\"configurationAttributes\": {\n                \"LGK__ConfigurationId__c\": \"<uuid>\"\n            }\n```\n\nwhere `uuid` is an existing Logik Configuration Id."
+					},
+					"response": [
+						{
+							"name": "Reconfigure existing Configuration",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"sessionContext\": {\n    \"stateful\": true\n  },\n  \"partnerData\": {\n    \"product\": {\n      \"configuredProductId\": \"01t5f000003w24zAAA\",\n      \"configurationAttributes\": {\n            \"LGK__ConfigurationId__c\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\"\n          }\n    }\n  },\n  \"fields\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2809"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 15:55:53 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 3\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 6\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"0409ef58-32d7-4c0e-b75d-536e8d6e02ea\",\n    \"revision\": 1,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 6,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 600,\n            \"level\": 0,\n            \"rollUpPrice\": 600\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 3,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 15,\n            \"level\": 0,\n            \"rollUpPrice\": 15\n        }\n    ],\n    \"total\": 615,\n    \"layouts\": [\n        {\n            \"url\": \"/blueprints/138/revisions/LATEST/layouts/1\",\n            \"label\": \"amfb\",\n            \"variableName\": \"amendFlow_amfb\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "Reconfigure existing Configuration - with Fields",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "{{origin}}",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"sessionContext\": {\n        \"stateful\": true\n    },\n    \"partnerData\": {\n        \"product\": {\n            \"configuredProductId\": \"01t5f000003w24zAAA\",\n            \"configurationAttributes\": {\n                \"LGK__ConfigurationId__c\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\"\n            }\n        }\n    },\n    \"fields\": [\n        {\n            \"variableName\": \"mfgQty\",\n            \"value\": 6\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2810"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:18:07 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 6\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 5\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"b60c5e9f-7c3d-4255-84e4-dd91a768cee0\",\n    \"revision\": 1,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 5,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 500,\n            \"level\": 0,\n            \"rollUpPrice\": 500\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 6,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 30,\n            \"level\": 0,\n            \"rollUpPrice\": 30\n        }\n    ],\n    \"total\": 530,\n    \"layouts\": [\n        {\n            \"url\": \"/blueprints/138/revisions/LATEST/layouts/1\",\n            \"label\": \"amfb\",\n            \"variableName\": \"amendFlow_amfb\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update a Configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//parse the response JSON",
+									"const responseJson = pm.response.json();",
+									"",
+									"if(responseJson.errorMessage) {",
+									"    console.error(pm.response.status, responseJson.errorMessage);",
+									"}",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The response has valid uuid\", () => {",
+									"    pm.expect(responseJson.uuid).to.be.a('string');",
+									"    pm.expect(responseJson.uuid).to.have.lengthOf(36);",
+									"    console.log(\"uuid\", responseJson.uuid)",
+									"    pm.collectionVariables.set(\"uuid\", responseJson.uuid);",
+									"});",
+									"",
+									"pm.test(\"The response is a valid configuration\", () => {",
+									"    pm.expect(responseJson.valid).to.be.a('boolean');",
+									"    pm.expect(responseJson.valid).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fields\": [\n        {\n            \"variableName\": \"orderQty\",\n            \"value\": 3\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/:uuid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}"
+								}
+							]
+						},
+						"description": "# Update a Configuration\n\nPass an array of field objects to update specific variables in the configuration\n\n```json\n    \"fields\": [\n        {\n            \"variableName\": \"<var1>\",\n            \"value\": <var1val>\n        },\n        {\n            \"variableName\": \"<var2>\",\n            \"value\": <var2val>\n        }\n    ]\n```"
+					},
+					"response": [
+						{
+							"name": "Update a Configuration - BOM Quantity Change",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fields\": [\n        {\n            \"variableName\": \"orderQty\",\n            \"value\": 3\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/fbc3d32c-7f86-4461-b144-986a0e8a5768",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"fbc3d32c-7f86-4461-b144-986a0e8a5768"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "191"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 15:50:39 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [],\n    \"uuid\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\",\n    \"revision\": 0,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": null\n}"
+						},
+						{
+							"name": "Update a Configuration - No Change",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fields\": [\n        {\n            \"variableName\": \"orderQty\",\n            \"value\": 3\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/fbc3d32c-7f86-4461-b144-986a0e8a5768",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"fbc3d32c-7f86-4461-b144-986a0e8a5768"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "137"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 15:52:50 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [],\n    \"uuid\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\",\n    \"revision\": 0,\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": false,\n    \"products\": null\n}"
+						},
+						{
+							"name": "Update Configuration - delta=false",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fields\": [\n        {\n            \"variableName\": \"orderQty\",\n            \"value\": 6\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/fbc3d32c-7f86-4461-b144-986a0e8a5768?delta=false",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"fbc3d32c-7f86-4461-b144-986a0e8a5768"
+									],
+									"query": [
+										{
+											"key": "delta",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2697"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 15:53:51 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 3\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 6\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\",\n    \"revision\": 0,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 6,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 600,\n            \"level\": 0,\n            \"rollUpPrice\": 600\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 3,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 15,\n            \"level\": 0,\n            \"rollUpPrice\": 15\n        }\n    ],\n    \"total\": 615\n}"
+						}
+					]
+				},
+				{
+					"name": "Save Configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//parse the response JSON",
+									"const responseJson = pm.response.json();",
+									"",
+									"if(responseJson.errorMessage) {",
+									"    console.error(pm.response.status, responseJson.errorMessage);",
+									"}",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"The response has valid uuid\", () => {",
+									"    pm.expect(responseJson.uuid).to.be.a('string');",
+									"    pm.expect(responseJson.uuid).to.have.lengthOf(36);",
+									"    console.log(\"uuid\", responseJson.uuid)",
+									"    pm.collectionVariables.set(\"uuid\", responseJson.uuid);",
+									"});",
+									"",
+									"pm.test(\"The response is a valid configuration\", () => {",
+									"    pm.expect(responseJson.valid).to.be.a('boolean');",
+									"    pm.expect(responseJson.valid).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/:uuid?save=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"query": [
+								{
+									"key": "save",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}"
+								}
+							]
+						},
+						"description": "# Save Configuration\n\nSame endpoint as _Update a Configuration_ with query param `save=true`. Can pass either an empty payload or an array of field objects to update specific variables in the configuration"
+					},
+					"response": [
+						{
+							"name": "Save Configuration - No Update",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/fbc3d32c-7f86-4461-b144-986a0e8a5768?save=true",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"fbc3d32c-7f86-4461-b144-986a0e8a5768"
+									],
+									"query": [
+										{
+											"key": "save",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2643"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 15:54:36 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 3\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 6\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"fbc3d32c-7f86-4461-b144-986a0e8a5768\",\n    \"revision\": 1,\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": false,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 6,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 600,\n            \"level\": 0,\n            \"rollUpPrice\": 600\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 3,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 15,\n            \"level\": 0,\n            \"rollUpPrice\": 15\n        }\n    ],\n    \"total\": 615\n}"
+						},
+						{
+							"name": "Save Configuration - with Field update",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"fields\": [\n        {\n            \"variableName\": \"orderQty\",\n            \"value\": 5\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/fbc3d32c-7f86-4461-b144-986a0e8a5768?save=true",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"fbc3d32c-7f86-4461-b144-986a0e8a5768"
+									],
+									"query": [
+										{
+											"key": "save",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2696"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:07:36 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"fields\": [\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"mfgQty\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productCode\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"value\": \"USD\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productFamily\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productDescription\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.id\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productUOM\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productPrice\",\n            \"value\": 0\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productName\",\n            \"value\": \"AFB\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"partner.quote.lineId\",\n            \"value\": \"\"\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.productId\",\n            \"value\": \"AFB1\"\n        },\n        {\n            \"userEdited\": true,\n            \"dataType\": \"number\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"orderQty\",\n            \"value\": 5\n        },\n        {\n            \"userEdited\": false,\n            \"dataType\": \"text\",\n            \"visibilityState\": \"visible\",\n            \"editable\": \"true\",\n            \"variableName\": \"sys.currentDate\",\n            \"value\": \"2023-04-18\"\n        }\n    ],\n    \"uuid\": \"a298f0b7-fb28-4b6a-a24f-aced32ff46a2\",\n    \"revision\": 1,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"valid\": true,\n    \"messages\": [],\n    \"productChange\": true,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"quantity\": 5,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saccs1\",\n            \"orderNumber\": 1,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"productCode\": \"SACS-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"Software\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 100,\n            \"extPrice\": 500,\n            \"level\": 0,\n            \"rollUpPrice\": 500\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"quantity\": 0,\n            \"bomType\": \"Sales\",\n            \"uniqueIdentifier\": \"saca2\",\n            \"orderNumber\": 2,\n            \"type\": \"accessory\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"productCode\": \"SACA-SC\",\n            \"externalId\": \"\",\n            \"productFamily\": \"\",\n            \"description\": \"\",\n            \"uom\": \"\",\n            \"price\": 5,\n            \"extPrice\": 0,\n            \"level\": 0,\n            \"rollUpPrice\": 0\n        }\n    ],\n    \"total\": 500\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Configuration",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/:uuid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}",
+									"description": "Logik UUID of configuration"
+								}
+							]
+						},
+						"description": "# Get a Configuration\n\nGet an existing Logik configuration. If data needs to be changed, use the _Reconfigure existing Configuration_ API call instead"
+					},
+					"response": [
+						{
+							"name": "Get Configuration",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/a298f0b7-fb28-4b6a-a24f-aced32ff46a2",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"a298f0b7-fb28-4b6a-a24f-aced32ff46a2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2813"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:09:37 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"sets\": {},\n    \"uuid\": \"a298f0b7-fb28-4b6a-a24f-aced32ff46a2\",\n    \"total\": 500,\n    \"valid\": true,\n    \"fields\": [\n        {\n            \"value\": 0,\n            \"dataType\": \"number\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"mfgQty\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"AFB1\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productCode\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"partner.quote.pricebookId\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"USD\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"partner.quote.currencyIsoCode\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productFamily\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productDescription\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"partner.quote.id\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productUOM\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": 0,\n            \"dataType\": \"number\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productPrice\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"AFB\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productName\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"partner.quote.lineId\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"AFB1\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.productId\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": 5,\n            \"dataType\": \"number\",\n            \"editable\": \"true\",\n            \"userEdited\": true,\n            \"variableName\": \"orderQty\",\n            \"visibilityState\": \"visible\"\n        },\n        {\n            \"value\": \"2023-04-18\",\n            \"dataType\": \"text\",\n            \"editable\": \"true\",\n            \"userEdited\": false,\n            \"variableName\": \"sys.currentDate\",\n            \"visibilityState\": \"visible\"\n        }\n    ],\n    \"messages\": [],\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"uom\": \"\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"type\": \"accessory\",\n            \"level\": 0,\n            \"price\": 100,\n            \"bomType\": \"Sales\",\n            \"extPrice\": 500,\n            \"quantity\": 5,\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"externalId\": \"\",\n            \"description\": \"\",\n            \"orderNumber\": 1,\n            \"productCode\": \"SACS-SC\",\n            \"rollUpPrice\": 500,\n            \"productFamily\": \"Software\",\n            \"uniqueIdentifier\": \"saccs1\"\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"uom\": \"\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"type\": \"accessory\",\n            \"level\": 0,\n            \"price\": 5,\n            \"bomType\": \"Sales\",\n            \"extPrice\": 0,\n            \"quantity\": 0,\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"externalId\": \"\",\n            \"description\": \"\",\n            \"orderNumber\": 2,\n            \"productCode\": \"SACA-SC\",\n            \"rollUpPrice\": 0,\n            \"productFamily\": \"\",\n            \"uniqueIdentifier\": \"saca2\"\n        }\n    ],\n    \"revision\": 1,\n    \"productChange\": true,\n    \"relatedChanges\": [\n        {\n            \"key\": \"products\",\n            \"type\": \"PRODUCT\"\n        }\n    ],\n    \"layouts\": [\n        {\n            \"url\": \"/blueprints/138/revisions/6/layouts/1\",\n            \"label\": \"amfb\",\n            \"variableName\": \"amendFlow_amfb\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Configuration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//parse the response JSON",
+									"try {",
+									"const responseJson = pm.response.json();",
+									"if(responseJson.errorMessage) {",
+									"    console.error(pm.response.status, responseJson.errorMessage);",
+									"    ",
+									"}} catch (e) {",
+									"    ",
+									"}",
+									"",
+									"pm.test(\"Status code is 204\", function () {",
+									"  pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/:uuid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid"
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Configuration",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/fbc3d32c-7f86-4461-b144-986a0e8a5768",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"fbc3d32c-7f86-4461-b144-986a0e8a5768"
+									]
+								}
+							},
+							"status": "No Content",
+							"code": 204,
+							"_postman_previewlanguage": "plain",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:04:09 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			],
+			"description": "APIs for managing Logik.io configurations"
+		},
+		{
+			"name": "BOM APIs",
+			"item": [
+				{
+					"name": "Get Entire BOM (all)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/:uuid/bom/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid",
+								"bom",
+								""
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}",
+									"description": "(Required) Unique Configuration ID Value"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Entire BOM with the given uuid for current state of Configuration",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/a298f0b7-fb28-4b6a-a24f-aced32ff46a2/bom/",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"a298f0b7-fb28-4b6a-a24f-aced32ff46a2",
+										"bom",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "974"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:11:11 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"total\": 500,\n    \"pageable\": {\n        \"sort\": {\n            \"empty\": false,\n            \"sorted\": true,\n            \"unsorted\": false\n        },\n        \"offset\": 0,\n        \"pageNumber\": 0,\n        \"pageSize\": 20,\n        \"paged\": true,\n        \"unpaged\": false\n    },\n    \"totalPages\": 1,\n    \"totalElements\": 2,\n    \"last\": true,\n    \"size\": 20,\n    \"number\": 0,\n    \"sort\": {\n        \"empty\": false,\n        \"sorted\": true,\n        \"unsorted\": false\n    },\n    \"numberOfElements\": 2,\n    \"first\": true,\n    \"empty\": false,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"uom\": \"\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"type\": \"accessory\",\n            \"level\": 0,\n            \"price\": 100,\n            \"bomType\": \"Sales\",\n            \"extPrice\": 500,\n            \"quantity\": 5,\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"externalId\": \"\",\n            \"description\": \"\",\n            \"orderNumber\": 1,\n            \"productCode\": \"SACS-SC\",\n            \"rollUpPrice\": 500,\n            \"productFamily\": \"Software\",\n            \"uniqueIdentifier\": \"saccs1\"\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"uom\": \"\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"type\": \"accessory\",\n            \"level\": 0,\n            \"price\": 5,\n            \"bomType\": \"Sales\",\n            \"extPrice\": 0,\n            \"quantity\": 0,\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"externalId\": \"\",\n            \"description\": \"\",\n            \"orderNumber\": 2,\n            \"productCode\": \"SACA-SC\",\n            \"rollUpPrice\": 0,\n            \"productFamily\": \"\",\n            \"uniqueIdentifier\": \"saca2\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Sales BOM",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/:uuid/bom/sales",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid",
+								"bom",
+								"sales"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "54006874",
+									"description": "Page number of data to be returned in response",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "54006874",
+									"description": "Size of Paged Data",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "magna elit ut",
+									"description": "Specify property and order{asc|desc} of sort in format field,asc[desc]",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}",
+									"description": "(Required) Unique Configuration ID Value"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Sales BOM",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "localhost",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/a298f0b7-fb28-4b6a-a24f-aced32ff46a2/bom/sales",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"a298f0b7-fb28-4b6a-a24f-aced32ff46a2",
+										"bom",
+										"sales"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "54006874",
+											"description": "Page number of data to be returned in response",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "54006874",
+											"description": "Size of Paged Data",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "magna elit ut",
+											"description": "Specify property and order{asc|desc} of sort in format field,asc[desc]",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "974"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:11:47 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"total\": 500,\n    \"pageable\": {\n        \"sort\": {\n            \"empty\": false,\n            \"sorted\": true,\n            \"unsorted\": false\n        },\n        \"offset\": 0,\n        \"pageNumber\": 0,\n        \"pageSize\": 20,\n        \"paged\": true,\n        \"unpaged\": false\n    },\n    \"totalPages\": 1,\n    \"totalElements\": 2,\n    \"last\": true,\n    \"size\": 20,\n    \"number\": 0,\n    \"sort\": {\n        \"empty\": false,\n        \"sorted\": true,\n        \"unsorted\": false\n    },\n    \"numberOfElements\": 2,\n    \"first\": true,\n    \"empty\": false,\n    \"products\": [\n        {\n            \"id\": \"SACS-SC\",\n            \"uom\": \"\",\n            \"name\": \"Simple Amend Child Subscription\",\n            \"type\": \"accessory\",\n            \"level\": 0,\n            \"price\": 100,\n            \"bomType\": \"Sales\",\n            \"extPrice\": 500,\n            \"quantity\": 5,\n            \"partnerId\": \"01t5f000003w1O3AAI\",\n            \"externalId\": \"\",\n            \"description\": \"\",\n            \"orderNumber\": 1,\n            \"productCode\": \"SACS-SC\",\n            \"rollUpPrice\": 500,\n            \"productFamily\": \"Software\",\n            \"uniqueIdentifier\": \"saccs1\"\n        },\n        {\n            \"id\": \"SACA-SC\",\n            \"uom\": \"\",\n            \"name\": \"Simple Amend Child Asset\",\n            \"type\": \"accessory\",\n            \"level\": 0,\n            \"price\": 5,\n            \"bomType\": \"Sales\",\n            \"extPrice\": 0,\n            \"quantity\": 0,\n            \"partnerId\": \"01t5f000003w259AAA\",\n            \"externalId\": \"\",\n            \"description\": \"\",\n            \"orderNumber\": 2,\n            \"productCode\": \"SACA-SC\",\n            \"rollUpPrice\": 0,\n            \"productFamily\": \"\",\n            \"uniqueIdentifier\": \"saca2\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Manufacturing BOM",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/:uuid/bom/manufacturing",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								":uuid",
+								"bom",
+								"manufacturing"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "54006874",
+									"description": "Page number of data to be returned in response",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "54006874",
+									"description": "Size of Paged Data",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "magna elit ut",
+									"description": "Specify property and order{asc|desc} of sort in format field,asc[desc]",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "{{uuid}}",
+									"description": "(Required) Unique Configuration ID Value"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Manufacturing BOM - No products in BOM",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Origin",
+										"value": "{{origin}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/:uuid/bom/manufacturing",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										":uuid",
+										"bom",
+										"manufacturing"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "54006874",
+											"description": "Page number of data to be returned in response",
+											"disabled": true
+										},
+										{
+											"key": "limit",
+											"value": "54006874",
+											"description": "Size of Paged Data",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "magna elit ut",
+											"description": "Specify property and order{asc|desc} of sort in format field,asc[desc]",
+											"disabled": true
+										}
+									],
+									"variable": [
+										{
+											"key": "uuid",
+											"value": "{{uuid}}",
+											"description": "(Required) Unique Configuration ID Value"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "330"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:13:25 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"total\": 500,\n    \"pageable\": {\n        \"sort\": {\n            \"empty\": false,\n            \"sorted\": true,\n            \"unsorted\": false\n        },\n        \"offset\": 0,\n        \"pageNumber\": 0,\n        \"pageSize\": 20,\n        \"paged\": true,\n        \"unpaged\": false\n    },\n    \"totalPages\": 0,\n    \"totalElements\": 0,\n    \"last\": true,\n    \"size\": 20,\n    \"number\": 0,\n    \"sort\": {\n        \"empty\": false,\n        \"sorted\": true,\n        \"unsorted\": false\n    },\n    \"numberOfElements\": 0,\n    \"first\": true,\n    \"empty\": true,\n    \"products\": []\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Layout APIs",
+			"item": [
+				{
+					"name": "Get End User Layout",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "{{origin}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}{{layoutUrl}}",
+							"host": [
+								"{{baseUrl}}{{layoutUrl}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get End User Layout",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Origin",
+										"value": "{{origin}}",
+										"type": "default"
+									}
+								],
+								"url": {
+									"raw": "https://demo6.demo.logik.io/api/blueprints/138/revisions/LATEST/layouts/1",
+									"protocol": "https",
+									"host": [
+										"demo6",
+										"demo",
+										"logik",
+										"io"
+									],
+									"path": [
+										"api",
+										"blueprints",
+										"138",
+										"revisions",
+										"LATEST",
+										"layouts",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Content-Length",
+									"value": "997"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 18 Apr 2023 16:12:33 GMT"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Strict-Transport-Security",
+									"value": "max-age=31536000 ; includeSubDomains"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-Xss-Protection",
+									"value": "1; mode=block"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"label\": \"amfb\",\n    \"fields\": [\n        {\n            \"type\": \"Number\",\n            \"label\": \"Mfg Qty                    \",\n            \"variableName\": \"mfgQty\"\n        },\n        {\n            \"type\": \"Number\",\n            \"label\": \"Order Qty                  \",\n            \"variableName\": \"orderQty\"\n        }\n    ],\n    \"layout\": {\n        \"label\": \"layoutsection\",\n        \"tiers\": [\n            {\n                \"depth\": 1,\n                \"label\": \"Tab 1\",\n                \"columnSets\": [\n                    {\n                        \"elements\": [\n                            {\n                                \"type\": \"field\",\n                                \"columnOrder\": 0,\n                                \"variableName\": \"mfgQty\"\n                            },\n                            {\n                                \"type\": \"field\",\n                                \"columnOrder\": 1,\n                                \"variableName\": \"orderQty\"\n                            }\n                        ],\n                        \"variableName\": \"col1\"\n                    }\n                ],\n                \"variableName\": \"tab1\"\n            }\n        ],\n        \"variableName\": \"layoutsection\"\n    },\n    \"tierDef\": [\n        {\n            \"depth\": 1,\n            \"representation\": \"Tab\"\n        }\n    ],\n    \"version\": 1,\n    \"productList\": {\n        \"type\": \"sales\",\n        \"columns\": [\n            {\n                \"label\": \"Qty\",\n                \"width\": \"10%\",\n                \"variableName\": \"quantity\"\n            },\n            {\n                \"label\": \"Product\",\n                \"width\": \"40%\",\n                \"variableName\": \"displayName\"\n            },\n            {\n                \"label\": \"List\",\n                \"width\": \"25%\",\n                \"variableName\": \"price\"\n            },\n            {\n                \"label\": \"Ext. List\",\n                \"width\": \"25%\",\n                \"variableName\": \"extList\"\n            }\n        ],\n        \"location\": \"modal\",\n        \"variableName\": \"\",\n        \"totalLocation\": \"bottom\",\n        \"hierarchyColumn\": \"displayName\",\n        \"displayNullPriceAs\": null,\n        \"displayZeroPriceAs\": null\n    },\n    \"variableName\": \"amendFlow_amfb\"\n}"
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{runtimeToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"let baseUrl = pm.collectionVariables.get('baseUrl');",
+					"if(baseUrl.endsWith('/')) {",
+					"    baseUrl = baseUrl.slice(0, -1) ",
+					"    pm.collectionVariables.set('baseUrl', baseUrl);",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://api.demo.logik.io/api",
+			"type": "string"
+		},
+		{
+			"key": "runtimeToken",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "origin",
+			"value": "localhost",
+			"type": "default"
+		},
+		{
+			"key": "configProductId",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "uuid",
+			"value": ""
+		},
+		{
+			"key": "layoutUrl",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

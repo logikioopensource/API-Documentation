@@ -1,0 +1,858 @@
+openapi: 3.0.3
+info:
+  title: Logik.io Admin API - Managed Tables
+  version: 1.0.0
+  description: Logik.io Admin API - Managed Tables Definition. These APIs can be used in headless implementations to perform administrative tasks
+  contact:
+    email: support@logik.io
+servers:
+  - url: https://{tenant}.{sector}.logik.io/{adminEndpoint}
+    description: Logik Environment
+    variables:
+      tenant:
+        default: example
+        description: "Logik.io tenant"
+      sector:
+        default: test
+        description: "Logik.io sector"
+      adminEndpoint:
+        default: a/managed_tables
+        description: "Admin Managed Tables API Endpoint"
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Managed Tables > Tables
+    description: Listing all Tables and working with indiviudal Tables
+  - name: Managed Tables > Metadata
+    description: Working with Table Metadata
+  - name: Managed Tables > Table Rows
+    description: Working with individual Table Rows
+  - name: Managed Tables > Import Tables
+    description: Import and Replace Tables
+  - name: Managed Tables > Export Tables
+    description: Export and Download Tables
+
+
+paths:
+  /v1/managedTables:
+    get:
+      tags:
+        - Managed Tables > Tables
+      summary: List All Tables
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedTableResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    post:
+      tags:
+        - Managed Tables > Tables
+      summary: Create a new Table
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManagedTableCreatePayload'
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedTableCreateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v2/managedTables/{tableName}:
+    get:
+      tags:
+        - Managed Tables > Tables
+      summary: Get Table Data and Metadata
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - Managed Tables > Tables
+      summary: Delete Table
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+        
+    post:
+      tags:
+        - Managed Tables > Import Tables
+      summary: Upload Table CSV
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                jobType:
+                  type: string
+                  example: TABLE_IMPORT
+                  enum:
+                   - TABLE_IMPORT
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v1/managedTables/{tableName}/metadata:
+    get:
+      tags:
+        - Managed Tables > Metadata
+      summary: 'Get Table Metadata'
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManagedTableCreateResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v1/managedTables/{tableName}/metadata/columns:
+    patch:
+      tags:
+        - Managed Tables > Metadata
+      summary: Add / Remove Table Metadata Column(s)
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MetadataPatch'
+      responses:
+        '202':
+          description: Successful response
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v1/managedTables/{tableName}/metadata/columns/{columnName}:
+    delete:
+      tags:
+        - Managed Tables > Metadata
+      summary: Delete Table Metadata Column
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+        - name: columnName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Column in the Managed Table
+      responses:
+        '204':
+          description: Successful response
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v1/managedTables/{tableName}:
+    post:
+      tags:
+        - Managed Tables > Table Rows
+      summary: Add new row to Table
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties: 
+                rows: 
+                  type: "array"
+                  items: 
+                    type: "object"
+                    additionalProperties:
+                      type: "string"
+
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnPatch'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v1/managedTables/{tableName}/{rowId}:
+    get:
+      tags:
+        - Managed Tables > Table Rows
+      summary: Get Table Data Row
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+        - name: rowId
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Row Id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+    patch:
+      tags:
+        - Managed Tables > Table Rows
+      summary: Update Table Data Row
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ColumnPatch'          
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+        - name: rowId
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: Row Id
+          
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ColumnWithId'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Managed Tables > Table Rows
+      summary: Delete Table Data Row
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+        - name: rowId
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: Row Id
+      responses:
+        '204':
+          description: The row was deleted successfully.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+  /v3/managedTables/{tableName}/export:
+    post:
+      tags:
+        - Managed Tables > Export Tables
+      summary: Export Table Data - Initiate Request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example: '{}'
+              description: Empty Object to POST
+              enum:
+               - {}
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+        
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+  /v2/job/{tableExportJobId}:
+    get:
+      tags:
+        - Managed Tables > Export Tables
+      summary: Export Table - Get Job Status
+      parameters:
+        - name: tableExportJobId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '16'
+          description: Job Id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+     
+  /v2/job/{tableExportJobId}/file:
+    get:
+      tags:
+        - Managed Tables > Export Tables
+      summary: Export Table - Download File
+      parameters:
+        - name: tableExportJobId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: '16'
+          description: Job Id
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
+
+
+components:
+  responses:
+    BadRequest:
+      description: Bad request. See `errorMessage` for additional details.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            "errorCode": "LGK-7A407E7202264005AD03A14D9"
+            "errorMessage": "Rows must not be empty."
+            "timestamp": "2023-05-31T02:08:58.235882682Z"
+    NotAuthorized:
+      description: Authorization information is missing or invalid.  
+    Forbidden:
+      description: Credentials are valid but insufficient privileges to perform the action on the resource.
+    NotFound:
+      description: Resource was not found. See `errorMessage` for additional details.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            "errorCode": "LGK-C2BD5E131995442CABF255BCD"
+            "errorMessage": "LOGIK_OBJECT 'OBJECT_VARIABLE_NAME' was not found."
+            "timestamp": "2023-05-31T02:07:58.447433023Z"
+    ServerError:
+      description: Unexpected Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            "errorCode": "LGK-82DB4CF583054DF0930EDE9BE"
+            "errorMessage": "An unexpected error occurred."
+            "timestamp": "2023-05-31T02:42:40.087287033Z"
+
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Admin API Bearer Token
+
+  schemas:
+    MetadataPatch:
+      type: "object"
+      properties: 
+        deleted: 
+          type: "array"
+          items: 
+            type: "string"
+        added: 
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/Column'
+
+    Column:
+      type: "object" 
+      allOf:
+        - $ref: '#/components/schemas/ColumnMetadata'
+        - properties: 
+            orderNumber: 
+              type: "integer"
+          
+
+    ColumnPatch:
+      type: "object"
+      required: 
+        - "rows"
+      properties: 
+        rows: 
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/ColumnWithId'
+
+    ColumnWithId:
+      type: "object"
+      properties:
+        ID: 
+          type: "number"
+        additionalProperties:
+          type: "string"
+
+    ColumnResponse:
+      type: "object"
+      allOf:
+        - properties:
+            DATE_MODIFIED: 
+              type: "string"
+            DATE_CREATED: 
+              type: "string"
+        - $ref: '#/components/schemas/ColumnWithId'
+
+    Pageable:
+      type: "object"
+      properties: 
+        sort: 
+          $ref: "#/components/schemas/Sort"
+        offset: 
+          type: "number"
+        pageNumber: 
+          type: "number"
+        pageSize: 
+          type: "number"
+        paged: 
+          type: "boolean"
+        unpaged: 
+          type: "boolean"
+          
+    TableResponse:
+      properties: 
+        content: 
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/ColumnResponse'
+        pageable: 
+          $ref: '#/components/schemas/Pageable'
+        totalPages: 
+          type: "number"
+        totalElements: 
+          type: "number"
+        last: 
+          type: "boolean"
+        size: 
+          type: "number"
+        number: 
+          type: "number"
+        sort: 
+          $ref: "#/components/schemas/Sort"
+        first: 
+          type: "boolean"
+        numberOfElements: 
+          type: "number"
+        empty: 
+          type: "boolean"
+
+    Sort:
+      type: "object"
+      properties: 
+        empty: 
+          type: "boolean"
+        unsorted: 
+          type: "boolean"
+        sorted: 
+          type: "boolean"
+        
+    JobResponse:
+      properties: 
+        id: 
+          type: "number"
+        started: 
+          type: "string"
+          format: "date-time"
+        jobType: 
+          type: "string"
+        status: 
+          type: "string"
+        finished: 
+          type: "string"
+          format: "date-time"
+          nullable: true
+      example:
+        "id": 6,
+        "started": "2023-05-31T02:51:16.550561712Z"
+        "finished": null
+        "jobType": "TABLE_EXPORT"
+        "status": "STARTED"
+
+    ImportTableResponse:
+        allOf:
+          - $ref: '#/components/schemas/JobResponse'
+          - type: "object"
+            result:
+            $ref: '#/components/schemas/ImportTableResult'
+            
+    ImportTableResult:
+      properties: 
+          totalRecords: 
+            type: "integer"
+          totalInserts: 
+            type: "integer"
+          totalUpdates: 
+            type: "integer"
+          tableName: 
+            type: "string"
+      
+
+    ErrorResponse:
+        properties: 
+          errorCode: 
+            type: "string"
+          errorMessage: 
+            type: "string"
+          timestamp: 
+            type: "string"
+            format: "date-time"
+
+    ManagedTableCreateResponse:
+      properties: 
+        dateCreated: 
+          type: "string"
+        dateModified: 
+          type: "string"
+        lastModifiedBy: 
+          type: "string"
+        name: 
+          type: "string"
+        columns: 
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/Column'
+        description: 
+          type: "string"
+
+    ManagedTableCreatePayload:
+      required: 
+        - "name"
+        - "description"
+        - "columns"
+      properties: 
+        name: 
+          type: "string"
+        description: 
+          type: "string"
+        columns: 
+          type: "array"
+          items: 
+            $ref: '#/components/schemas/ColumnMetadata'
+            
+
+    ColumnMetadata:
+      type: "object"
+      required: 
+        - "name"
+        - "description"
+        - "type"
+      properties: 
+        name: 
+          type: "string"
+        type: 
+          type: "string"
+          enum: [text, number]
+        description: 
+          type: "string"
+
+    ManagedTableResponse:
+      type: object
+      properties: 
+        content: 
+          type: "array"
+          items: 
+            $ref: "#/components/schemas/ManagedTableCreateResponse"
+        pageable: 
+          $ref: '#/components/schemas/Pageable'
+        totalPages: 
+          type: "number"
+        totalElements: 
+          type: "number"
+        last: 
+          type: "boolean"
+        size: 
+          type: "number"
+        number: 
+          type: "number"
+        sort: 
+          $ref: "#/components/schemas/Sort"
+        first: 
+          type: "boolean"
+        numberOfElements: 
+          type: "number"
+        empty: 
+          type: "boolean"
+      example:
+        content:
+          - dateCreated: 2023-05-30T21:19:32.650+00:00
+            dateModified: 2023-05-30T21:19:55.210+00:00
+            lastModifiedBy: NO_USER_ID
+            name: packersTable
+            columns:
+              - name: a
+                type: text
+                description: ""
+                orderNumber: 1
+              - name: b
+                type: text
+                description: ""
+                orderNumber: 2
+            description: ""
+          - dateCreated: 2023-05-31T02:34:32.749+00:00
+            dateModified: 2023-05-31T02:34:32.749+00:00
+            lastModifiedBy: NO_USER_ID
+            name: shapes
+            columns:
+              - name: sides
+                type: number
+                description: ""
+                orderNumber: 1
+              - name: shape
+                type: text
+                description: ""
+                orderNumber: 2
+            description: ""
+        pageable:
+          sort:
+            empty: false
+            unsorted: false
+            sorted: true
+          offset: 0
+          pageNumber: 0
+          pageSize: 100
+          paged: true
+          unpaged: false
+        totalPages: 1
+        totalElements: 2
+        last: true
+        size: 100
+        number: 0
+        sort:
+          empty: false
+          unsorted: false
+          sorted: true
+        first: true
+        numberOfElements: 2
+        empty: false

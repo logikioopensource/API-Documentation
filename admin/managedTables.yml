@@ -6,7 +6,7 @@ info:
   contact:
     email: support@logik.io
 servers:
-  - url: https://{tenant}.{sector}.logik.io/{adminEndpoint}
+  - url: https://{tenant}.{sector}.logik.io
     description: Logik Environment
     variables:
       tenant:
@@ -15,9 +15,6 @@ servers:
       sector:
         default: test
         description: "Logik.io sector"
-      adminEndpoint:
-        default: a/managed_tables
-        description: "Admin Managed Tables API Endpoint"
 
 security:
   - bearerAuth: []
@@ -36,7 +33,7 @@ tags:
 
 
 paths:
-  /v1/managedTables:
+  /api/managedTables/v1/managedTables:
     get:
       tags:
         - Managed Tables > Tables
@@ -86,7 +83,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v2/managedTables/{tableName}:
+  /api/managedTables/v2/managedTables/{tableName}:
     get:
       tags:
         - Managed Tables > Tables
@@ -183,7 +180,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v1/managedTables/{tableName}/metadata:
+  /api/managedTables/v1/managedTables/{tableName}/metadata:
     get:
       tags:
         - Managed Tables > Metadata
@@ -213,7 +210,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v1/managedTables/{tableName}/metadata/columns:
+  /api/managedTables/v1/managedTables/{tableName}/metadata/columns:
     patch:
       tags:
         - Managed Tables > Metadata
@@ -244,7 +241,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v1/managedTables/{tableName}/metadata/columns/{columnName}:
+  /api/managedTables/v1/managedTables/{tableName}/metadata/columns/{columnName}:
     delete:
       tags:
         - Managed Tables > Metadata
@@ -276,7 +273,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v1/managedTables/{tableName}:
+  /api/managedTables/v1/managedTables/{tableName}:
     post:
       tags:
         - Managed Tables > Table Rows
@@ -319,7 +316,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v1/managedTables/{tableName}/{rowId}:
+  /api/managedTables/v1/managedTables/{tableName}/{rowId}:
     get:
       tags:
         - Managed Tables > Table Rows
@@ -427,7 +424,7 @@ paths:
           $ref: '#/components/responses/ServerError'
 
 
-  /v3/managedTables/{tableName}/export:
+  /api/managedTables/v3/managedTables/{tableName}/export:
     post:
       tags:
         - Managed Tables > Export Tables
@@ -467,7 +464,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
 
-  /v2/job/{tableExportJobId}:
+  /api/managedTables/v2/job/{tableExportJobId}:
     get:
       tags:
         - Managed Tables > Export Tables
@@ -498,7 +495,7 @@ paths:
         '5XX':
           $ref: '#/components/responses/ServerError'
      
-  /v2/job/{tableExportJobId}/file:
+  /api/managedTables/v2/job/{tableExportJobId}/file:
     get:
       tags:
         - Managed Tables > Export Tables

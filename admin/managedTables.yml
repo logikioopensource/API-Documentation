@@ -179,6 +179,48 @@ paths:
           $ref: '#/components/responses/NotFound'
         '5XX':
           $ref: '#/components/responses/ServerError'
+    put:
+      tags:
+        - Managed Tables > Import Tables
+      summary: Replace data in table with uploaded data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                jobType:
+                  type: string
+                  example: TABLE_IMPORT
+                  enum:
+                   - TABLE_IMPORT
+      parameters:
+        - name: tableName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: Name of the Managed Table
+      responses:
+        '201':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/NotAuthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '5XX':
+          $ref: '#/components/responses/ServerError'
 
   /api/managedTables/v1/managedTables/{tableName}/metadata:
     get:

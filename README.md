@@ -130,7 +130,19 @@ Now the Swagger Editor should be configured to make requests to your Logik Insta
 
 For using each of the APIs, please see the [Logik.io Support site for detailed Runtime API documentation](https://logikio3.my.site.com/s/article/Logik-io-Runtime-APIs)
 
-### Additional Resources
+## Logik&period;io Admin APIs
+
+Logik&period;io provides access to the admin APIs for automating and managing the setup of Logik&period;io from the Administrative side.
+
+Current APIs
+
+- Managed Tables
+
+**Important:**
+> Real API calls will be made to the Logik Instance that you authorize, take special care if you are using a production environment versus a test. Data can be persisted in Logik and if connections are configured to external systems, additional downstream effects may occur.
+>
+
+## Additional Resources
 
 - [Logik.io Support site for detailed Runtime API documentation](https://logikio3.my.site.com/s/article/Logik-io-Runtime-APIs)
 - [Postman API Client](https://www.postman.com/)

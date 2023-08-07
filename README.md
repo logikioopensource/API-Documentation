@@ -30,7 +30,7 @@ See [Authenticating Logik API Calls](https://logikio3.my.site.com/s/article/Auth
 
 A Postman collection for commonly used Runtime APIs is provided in this repository to allow for easy testing and usage of the provided Runtime APIs.
 
-[Logik Postman Collection](/Logik%20Configurator%20Runtime%20APIs.postman_collection.json)
+[Logik Postman Collection](/runtime/Logik%20Configurator%20Runtime%20APIs.postman_collection.json)
 
 This Collection contains 3 folders grouping the API calls
 
@@ -90,7 +90,7 @@ For using each of the APIs, please see the [Logik.io Support site for detailed R
 
 A Swagger (OpenAPI) file documenting the Logik Runtime APIs, with example responses and schema(s) supported.
 
-[Logik Swagger Runtime File](/endUserAPIExample.yml)
+[Logik Swagger Runtime File](/runtime/endUserAPIExample.yml)
 
 This Swagger file has 3 sections, mostly overlapping with the Postman collection as well.
 

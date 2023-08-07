@@ -90,7 +90,7 @@ For using each of the APIs, please see the [Logik.io Support site for detailed R
 
 A Swagger (OpenAPI) file documenting the Logik Runtime APIs, with example responses and schema(s) supported.
 
-[Logik Swagger Runtime File](/runtime/endUserAPIExample.yml)
+[Logik Swagger Runtime File](/runtime/RuntimeAPIs.yml)
 
 This Swagger file has 3 sections, mostly overlapping with the Postman collection as well.
 

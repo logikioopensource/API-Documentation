@@ -1,0 +1,181 @@
+openapi: 3.0.3
+info:
+  title: Logik.io Admin API - Blueprint Import/Export
+  description: APIs with which to import and export Logik.io Blueprints. Useful for
+    taking backups and executing migrations among environments.
+  version: 1.0.0
+  contact:
+    email: support@logik.io
+    
+servers:
+  - url: https://{tenant}.{sector}.logik.io
+    description: Logik Environment
+    variables:
+      tenant:
+        default: example
+        description: "Logik.io tenant"
+      sector:
+        default: test
+        description: "Logik.io sector"
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Blueprint > Export
+    description: Export Blueprints
+  - name: Blueprint > Import
+    description: Import Blueprints
+
+
+paths:
+  /api/admin/v1/bulk/blueprints/export:
+    post:
+      summary: Initiate bulk export of blueprints
+      description: Initiate a bulk export of blueprints with the given payload.
+      tags:
+      - Blueprint > Export
+      requestBody:
+        description: Payload for initiating the bulk export
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        200:
+          description: Bulk export job created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    type: string
+                    format: date-time
+                  modified:
+                    type: string
+                    format: date-time
+                  id:
+                    type: integer
+                  jobType:
+                    type: string
+                  status:
+                    type: string
+  /api/admin/v2/uploadFile:
+    post:
+      tags:
+      - Blueprint > Import
+      summary: Upload a blueprint zip file
+      description: Upload a file using multipart/form-data
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - file
+              - jobType
+              properties:
+                jobType:
+                  type: string
+                  description: Type of job
+                  enum:
+                    - GENERIC_IMPORT
+                file:
+                  type: string
+                  description: Binary file data
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created:
+                    type: string
+                    format: date-time
+                  modified:
+                    type: string
+                    format: date-time
+                  id:
+                    type: integer
+                  jobType:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - STARTED
+                    - COMPLETED
+                    - FAILED
+  /api/admin/v1/job/{jobId}:
+    get:
+      summary: Retrieve job details by ID
+      description: Retrieve details of a job by providing its ID.
+      tags:
+      - Blueprint > Export
+      - Blueprint > Import
+      parameters:
+      - name: jobId
+        in: path
+        description: Id of the job
+        required: true
+        schema:
+          type: integer
+      responses:
+        200:
+          description: Job details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  started:
+                    type: string
+                    format: date-time
+                  finished:
+                    type: string
+                    format: date-time
+                  jobType:
+                    type: string
+                  status:
+                    type: string
+  
+  /api/admin/v2/bulk/export/{jobId}:
+    get:
+      summary: Retrieve bulk export by job ID
+      description: Retrieve a bulk export file by providing the job ID.
+      tags:
+      - Blueprint > Export
+      parameters:
+      - name: jobId
+        in: path
+        description: Id of the bulk export job
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Bulk export file
+          headers:
+            Content-Disposition:
+              description: Attachment filename
+              schema:
+                type: string
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Admin API Bearer Token

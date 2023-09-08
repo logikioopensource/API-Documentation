@@ -136,7 +136,8 @@ Logik&period;io provides access to the admin APIs for automating and managing th
 
 Current APIs
 
-- Managed Tables
+- [Managed Tables](admin/managedTables.yml)
+- [Blueprint: Import &amp; Export](admin/blueprint.yml)
 
 **Important:**
 > Real API calls will be made to the Logik Instance that you authorize, take special care if you are using a production environment versus a test. Data can be persisted in Logik and if connections are configured to external systems, additional downstream effects may occur.

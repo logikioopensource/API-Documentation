@@ -1,0 +1,2307 @@
+openapi: 3.0.1
+info:
+  title: Logik Configurator Runtime APIs V2
+  version: 2.1.0
+  description: |
+    Logik.io End User API Definition. Shows payload structure and schema, authroization approach and endpoint format. Can be used for custom UI or headless implementations.
+
+    ## Important Versioning Information
+
+    Blueprints that use Product Picker Fields ***must*** use the `application/vnd.logik.cfg-v2+json` Content-Type when making requests.
+
+     The Runtime APIs are versioned using different Content-Types. There are 2 Content-Type formats, `application/json` for v1 and `application/vnd.logik.cfg-v2+json` for v2.
+      - `application/json`: can be used with regular Logik field types (number, boolean, text and picklist) and sets.
+      - `application/vnd.logik.cfg-v2+json`: can be used with all regular field types as well as Product Picker Fields.
+      
+    The Accept Header should match the Content-Type being used, either:
+      - `application/json`: for v1.
+      - `application/vnd.logik.cfg-v2+json, application/json`: for v2.
+
+  contact:
+    email: support@logik.io
+servers:
+  - url: https://{tenant}.{sector}.logik.io
+    variables:
+      tenant:
+        default: example
+        description: "Logik.io tenant"
+      sector:
+        default: test
+        description: "Logik.io sector"
+security:
+  - RuntimeTokenBearerAuth: []
+tags:
+  - name: Configuration (V2)
+    description: Creating new configurations, reconfiguring existing configurations, making updates to a configuration and saving changes.
+  - name: Runtime - Bill of Materials
+    description: Get Bill of Materials (BOM) information for a given configuration UUID.
+paths:
+  /api:
+    post:
+      tags:
+        - Configuration (V2)
+      summary: Start Configuration
+      description: Initialize a new Configuration or reconfigure an existing Configuration if passing an existing Logik Configuration UUID in the Request Body.
+      operationId: startConfigV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+      requestBody:
+        $ref: "#/components/requestBodies/InitializeConfigurationV2"
+      responses:
+        200:
+          description: Return the state of configuration at initalization or reconfiguration. Includes fields, messages and products.
+          content:
+            application/vnd.logik.cfg-v2+json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseV2"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+
+  /api/{uuid}:
+    get:
+      tags:
+        - Configuration (V2)
+      summary: Get Configuration
+      description: |
+        Returns the Configuration state from the given Configuration UUID. This *does not* allow changes to made to the Configuration. To make changes, reconfigure using the POST call.
+      operationId: getConfigByUuidV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - $ref: "#/components/parameters/ConfigurationUUID"
+      responses:
+        200:
+          description: Return initial state of fields, messages and products
+          content:
+            application/vnd.logik.cfg-v2+json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseV2"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+    patch:
+      tags:
+        - Configuration (V2)
+      summary: Update or Save Configuration
+      description: |
+        Update or Save Configuration with the provided Configuration UUID.
+      operationId: updateConfigByUuidV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - $ref: "#/components/parameters/ConfigurationUUID"
+        - $ref: "#/components/parameters/queryDelta"
+        - $ref: "#/components/parameters/querySave"
+      requestBody:
+        description: Update or Save Payload for a Configuration.
+        content:
+          application/vnd.logik.cfg-v2+json:
+            schema:
+              $ref: "#/components/schemas/UpdateConfigV2"
+        required: true
+      responses:
+        200:
+          description: Returns state of fields, messages and products
+          content:
+            application/vnd.logik.cfg-v2+json:
+              schema:
+                $ref: "#/components/schemas/ConfigResponseV2"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+  /api/{uuid}/sets/{setVariableName}:
+    get:
+      tags:
+        - Configuration (V2)
+      summary:
+        Access fields in a given Set. Use if Set flagged in relatedChanges
+        param
+      operationId: getSet
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - $ref: "#/components/parameters/ConfigurationUUID"
+        - name: setVariableName
+          in: path
+          description: Variable name of the Set defined in admin for which data is requested
+          required: true
+          schema:
+            type: string
+        - $ref: "#/components/parameters/queryPage"
+        - $ref: "#/components/parameters/queryLimit"
+        - $ref: "#/components/parameters/querySort"
+      responses:
+        200:
+          description: Paginated details for a given Set variable name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SetsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+  /api/{uuid}/bom:
+    get:
+      tags:
+        - Runtime - Bill of Materials
+      summary: Get BOM
+      description: Get BOM with the given uuid for current state of Configuration
+      operationId: getAllBomV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - $ref: "#/components/parameters/ConfigurationUUID"
+        - $ref: "#/components/parameters/queryPage"
+        - $ref: "#/components/parameters/queryLimit"
+        - $ref: "#/components/parameters/querySort"
+        - name: bomType
+          in: query
+          description: Pass comma separated list of bom types to be returned
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return Entire BOM snapshot of Configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOMResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+  /api/{uuid}/bom/sales:
+    get:
+      tags:
+        - Runtime - Bill of Materials
+      summary: Get Sales BOM
+      description: Get Sales BOM with the given uuid for current state of Configuration
+      operationId: getSalesBomV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - $ref: "#/components/parameters/ConfigurationUUID"
+        - $ref: "#/components/parameters/queryPage"
+        - $ref: "#/components/parameters/queryLimit"
+        - $ref: "#/components/parameters/querySort"
+      responses:
+        200:
+          description: Return current sales BOM of Configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOMResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+  /api/{uuid}/bom/manufacturing:
+    get:
+      tags:
+        - Runtime - Bill of Materials
+      summary: Get Manufacturing BOM
+      description: Get Manufacturing BOM with the given uuid for current state of Configuration.
+      operationId: getManufacturingBomV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - $ref: "#/components/parameters/ConfigurationUUID"
+        - $ref: "#/components/parameters/queryPage"
+        - $ref: "#/components/parameters/queryLimit"
+        - $ref: "#/components/parameters/querySort"
+      responses:
+        200:
+          description: Return Manufacturing BOM snapshot of Configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOMResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+  /api/{uuid}/bom/{custom}:
+    get:
+      tags:
+        - Runtime - Bill of Materials
+      summary: Get Custom BOM
+      description: Get Custom BOM type line items defined in the admin
+      operationId: getBomByNameV2
+      parameters:
+        - $ref: "#/components/parameters/headerOrigin"
+        - name: custom
+          in: path
+          description: Custom BOM Type name
+          required: true
+          schema:
+            type: string
+        - $ref: "#/components/parameters/ConfigurationUUID"
+        - $ref: "#/components/parameters/queryPage"
+        - $ref: "#/components/parameters/queryLimit"
+        - $ref: "#/components/parameters/querySort"
+      responses:
+        200:
+          description: Returns BOM snapshot of Configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BOMResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/NotAuthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "5XX":
+          $ref: "#/components/responses/ServerError"
+components:
+  parameters:
+    headerOrigin:
+      in: header
+      name: Origin
+      description: Request Origin, needs to be one of the allowed origins for the Runtime Token being used.
+      schema:
+        type: string
+      required: true
+    ConfigurationUUID:
+      in: path
+      name: uuid
+      description: Unique Configuration ID Value
+      required: true
+      schema:
+        type: string
+    queryPage:
+      in: "query"
+      name: "page"
+      description: "Page number of results to return"
+      schema:
+        type: "number"
+        default: 0
+      required: true
+    queryLimit:
+      in: "query"
+      name: "limit"
+      description: "Size of the paged data results"
+      schema:
+        type: "number"
+        default: 100
+      required: true
+    querySort:
+      in: "query"
+      name: "sort"
+      description: "Sort field and order of the results, specify property and order{asc|desc} of sort in format field,asc[desc]"
+      schema:
+        type: "string"
+        default: "modified%2CDESC"
+      required: true
+    querySave:
+      name: save
+      in: query
+      description:
+        Pass save parameter as true to save the Configuration and send
+        BOM to connected application
+      schema:
+        type: boolean
+        default: false
+    queryDelta:
+      name: delta
+      in: query
+      description:
+        If `delta=true` the API only retruns changed data. This is default behavior
+        of the API if the parameter is omitted.
+      schema:
+        type: boolean
+        default: true
+  requestBodies:
+    InitializeConfigurationV2:
+      description: Initialization Payload
+      required: true
+      content:
+        application/vnd.logik.cfg-v2+json:
+          schema:
+            $ref: "#/components/schemas/InitConfigV2"
+  responses:
+    BadRequest:
+      description: Bad request. See `errorMessage` for additional details.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotAuthorized:
+      description: Authorization information is missing or invalid.
+    Forbidden:
+      description: Credentials are valid but insufficient privileges to perform the action on the resource.
+    NotFound:
+      description: Resource was not found. See `errorMessage` for additional details.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ServerError:
+      description: Unexpected Server Error.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    FieldPayload:
+      type: object
+      properties:
+        variableName:
+          type: string
+        value:
+          type: string
+    UpdateConfigV2:
+      type: object
+      properties:
+        fields:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              variableName:
+                type: "string"
+              value:
+                type: "boolean"
+              index:
+                type: "number"
+              set:
+                type: "string"
+              uniqueName:
+                type: "string"
+        responseState:
+          properties:
+            setPagination:
+              properties:
+                additionalProperties:
+                  required:
+                    - "pageSize"
+                    - "pageNumber"
+                  properties:
+                    pageSize:
+                      type: "number"
+                    pageNumber:
+                      type: "number"
+                  type: "object"
+              type: "object"
+            defaultPagination:
+              required:
+                - "pageSize"
+                - "pageNumber"
+              properties:
+                pageSize:
+                  type: "number"
+                  default: 10
+                pageNumber:
+                  type: "number"
+                  default: 0
+              type: "object"
+          type: "object"
+      example:
+        fields:
+        - variableName: cpuPicker.select
+          uniqueName: cpuPicker-1003-cpuPicker.select
+          value: true
+          set: cpuPicker
+          index: 3
+
+    InitConfigV2:
+      type: object
+      properties:
+        sessionContext:
+          required:
+            - "stateful"
+          properties:
+            stateful:
+              type: "boolean"
+          type: "object"
+        partnerData:
+          properties:
+            quote:
+              properties:
+                SBQQ__PricebookId__c:
+                  type: "string"
+                LGK__QueriedEditAccess__c:
+                  type: "string"
+              type: "object"
+            product:
+              properties:
+                configuredProductId:
+                  type: "string"
+                configurationAttributes:
+                  properties:
+                    LGK__Logik_Id__c:
+                      type: "string"
+                  type: "object"
+              type: "object"
+          type: "object"
+        configurableProduct:
+          properties:
+            responseState:
+              required:
+                - "defaultPagination"
+              properties:
+                defaultPagination:
+                  required:
+                    - "pageSize"
+                    - "pageNumber"
+                  properties:
+                    pageSize:
+                      type: "number"
+                    pageNumber:
+                      type: "number"
+                  type: "object"
+              type: "object"
+          type: "object"
+        productId:
+          type: "string"
+      example:
+        sessionContext:
+          stateful: true
+        productId: 01t6e000009bOeLAAU
+
+    BOMResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        empty:
+          type: boolean
+        total:
+          type: integer
+      example:
+        total: 350
+        pageable:
+          sort:
+            empty: false
+            sorted: true
+            unsorted: false
+          offset: 0
+          pageNumber: 0
+          pageSize: 20
+          paged: true
+          unpaged: false
+        totalPages: 1
+        totalElements: 2
+        last: true
+        size: 20
+        number: 0
+        sort:
+          empty: false
+          sorted: true
+          unsorted: false
+        numberOfElements: 2
+        first: true
+        empty: false
+        products:
+          - id: SSM
+            uom: ""
+            name: Single Motherboard
+            type: accessory
+            level: 0
+            price: 125
+            bomType: Sales
+            extPrice: 125
+            quantity: 1
+            partnerId: 01t6e000009gRTpAAM
+            externalId: ""
+            description: ""
+            orderNumber: 10
+            productCode: SSM
+            rollUpPrice: 350
+            productFamily: ""
+            uniqueIdentifier: motherboard
+          - id: CPU7320GHZRYZ3
+            uom: ""
+            name: AMD Ryzen 3 7320U
+            type: accessory
+            level: 1
+            price: 225
+            bomType: SALES
+            extPrice: 225
+            extended:
+              watts: "150"
+            quantity: 1
+            partnerId: 01t6e000009bOfYAAU
+            externalId: ""
+            description: ""
+            productCode: CPU7320GHZRYZ3
+            rollUpPrice: 225
+            parentProduct: motherboard
+            productFamily: Hardware
+            effectiveParent: motherboard
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        selectionType:
+          type: string
+        quantity:
+          type: integer
+        bomType:
+          type: string
+        level:
+          type: integer
+        parentProduct:
+          type: integer
+        notes:
+          type: string
+        uniqueIdentifier:
+          type: integer
+        description:
+          type: string
+        externalId:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+        extPrice:
+          type: number
+    Field:
+      type: object
+      properties:
+        value:
+          type: string
+        dataType:
+          type: string
+        visibilityState:
+          type: string
+        editable:
+          type: string
+        variableName:
+          type: string
+        optionSet:
+          required:
+            - options
+          type: object
+          properties:
+            options:
+              type: array
+              items:
+                required:
+                  - label
+                  - orderNumber
+                  - state
+                  - value
+                type: object
+                properties:
+                  label:
+                    type: string
+                  state:
+                    type: string
+                  value:
+                    type: string
+                  imageUrl:
+                    type: string
+                  orderNumber:
+                    type: integer
+    Message:
+      required:
+        - error
+        - field
+        - message
+        - type
+      type: object
+      properties:
+        message:
+          type: string
+        type:
+          type: string
+        error:
+          type: boolean
+        field:
+          type: string
+    relatedChangesValue:
+      type: object
+      properties:
+        key:
+          type: string
+        type:
+          type: string
+          description:
+            Value of SET|PRODUCT which will return KEY value as variable
+            name of set or static value products
+    SetsContent:
+      type: object
+      properties:
+        index:
+          type: integer
+        fields:
+          type: array
+          items:
+            $ref: "#/components/schemas/Field"
+    SetsResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/SetsContent"
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                empty:
+                  type: boolean
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+            offset:
+              type: integer
+            pageNumber:
+              type: integer
+            pageSize:
+              type: integer
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        last:
+          type: boolean
+        size:
+          type: integer
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        first:
+          type: boolean
+        empty:
+          type: boolean
+        total:
+          type: integer
+    ConfigResponseV2:
+      type: object
+      properties:
+        fields:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              userEdited:
+                type: "boolean"
+              dataType:
+                type: "string"
+              visibilityState:
+                type: "string"
+              editable:
+                type: "string"
+              variableName:
+                type: "string"
+              uniqueName:
+                type: "string"
+              value:
+                anyOf:
+                  - type: "string"
+                  - type: "number"
+                  - type: "boolean"
+                  - type: "array"
+                    items:
+                      type: "string"
+              optionSet:
+                required:
+                  - "options"
+                properties:
+                  options:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        label:
+                          type: "string"
+                        state:
+                          type: "string"
+                        value:
+                          type: "string"
+                        imageUrl:
+                          type: "string"
+                        orderNumber:
+                          type: "number"
+                type: "object"
+              selectAll:
+                type: "string"
+              rows:
+                required:
+                  - "content"
+                  - "pageable"
+                  - "last"
+                  - "totalPages"
+                  - "totalElements"
+                  - "size"
+                  - "number"
+                  - "sort"
+                  - "numberOfElements"
+                  - "first"
+                  - "empty"
+                properties:
+                  content:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        index:
+                          type: "number"
+                        fields:
+                          type: "array"
+                          items:
+                            type: "object"
+                            properties:
+                              userEdited:
+                                type: "boolean"
+                              dataType:
+                                type: "string"
+                              visibilityState:
+                                type: "string"
+                              editable:
+                                type: "string"
+                              variableName:
+                                type: "string"
+                              uniqueName:
+                                type: "string"
+                              value:
+                                type: "string"
+                              set:
+                                type: "string"
+                              index:
+                                type: "number"
+                        label:
+                          type: "string"
+                        state:
+                          type: "string"
+                        value:
+                          type: "string"
+                        imageUrl:
+                          type: "string"
+                        orderNumber:
+                          type: "number"
+                        productDetails:
+                          required:
+                            - "price"
+                            - "name"
+                          properties:
+                            price:
+                              type: "number"
+                            name:
+                              type: "string"
+                          type: "object"
+                  pageable:
+                    type: "string"
+                  last:
+                    type: "boolean"
+                  totalPages:
+                    type: "number"
+                  totalElements:
+                    type: "number"
+                  size:
+                    type: "number"
+                  number:
+                    type: "number"
+                  sort:
+                    required:
+                      - "empty"
+                      - "sorted"
+                      - "unsorted"
+                    properties:
+                      empty:
+                        type: "boolean"
+                      sorted:
+                        type: "boolean"
+                      unsorted:
+                        type: "boolean"
+                    type: "object"
+                  numberOfElements:
+                    type: "number"
+                  first:
+                    type: "boolean"
+                  empty:
+                    type: "boolean"
+                type: "object"
+        uuid:
+          type: "string"
+        revision:
+          type: "number"
+        relatedChanges:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              key:
+                type: "string"
+              type:
+                type: "string"
+        valid:
+          type: "boolean"
+        messages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Message"
+        productChange:
+          type: "boolean"
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        showValidationButton:
+          type: "boolean"
+        layouts:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              url:
+                type: "string"
+              label:
+                type: "string"
+              variableName:
+                type: "string"
+      example:
+        fields:
+          - userEdited: false
+            dataType: array
+            visibilityState: visible
+            editable: "true"
+            variableName: ramPicker
+            uniqueName: ramPicker
+            value: []
+            optionSet:
+              options:
+                - label: 8GB RAM Module
+                  state: visible
+                  value: RAM8GB
+                  imageUrl: https://i.imgur.com/WkXo98I.png
+                  orderNumber: 10
+                - label: 16GB RAM Module
+                  state: visible
+                  value: RAM16GB
+                  imageUrl: https://i.imgur.com/WkXo98I.png
+                  orderNumber: 20
+                - label: 32GB RAM Module
+                  state: visible
+                  value: RAM32GB
+                  imageUrl: https://i.imgur.com/WkXo98I.png
+                  orderNumber: 30
+            selectAll: NONE
+            rows:
+              content:
+                - index: 0
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: ramPicker.value
+                      uniqueName: ramPicker-1000-ramPicker.value
+                      value: RAM8GB
+                      set: ramPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.interface
+                      uniqueName: ramPicker-1000-ramPicker.interface
+                      value: DDR4
+                      optionSet:
+                        selectedOptions:
+                          - label: DDR4
+                            state: visible
+                            value: DDR4
+                            imageUrl: null
+                            orderNumber: 10
+                        options:
+                          - label: DDR4
+                            state: visible
+                            value: DDR4
+                            imageUrl: null
+                            orderNumber: 10
+                          - label: DDR5
+                            state: visible
+                            value: DDR5
+                            imageUrl: null
+                            orderNumber: 20
+                      set: ramPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.select
+                      uniqueName: ramPicker-1000-ramPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: ramPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.quantity
+                      uniqueName: ramPicker-1000-ramPicker.quantity
+                      value: 0
+                      step: 1
+                      set: ramPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.imageUrl
+                      uniqueName: ramPicker-1000-ramPicker.imageUrl
+                      value: ""
+                      set: ramPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: ramPicker.storage
+                      uniqueName: ramPicker-1000-ramPicker.storage
+                      value: 0
+                      set: ramPicker
+                      index: 0
+                  label: 8GB RAM Module
+                  state: visible
+                  value: RAM8GB
+                  imageUrl: https://i.imgur.com/WkXo98I.png
+                  orderNumber: 10
+                  productDetails:
+                    price: 50
+                    name: RAM 8GB
+                - index: 1
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: ramPicker.value
+                      uniqueName: ramPicker-1001-ramPicker.value
+                      value: RAM16GB
+                      set: ramPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.interface
+                      uniqueName: ramPicker-1001-ramPicker.interface
+                      value: DDR4
+                      optionSet:
+                        selectedOptions:
+                          - label: DDR4
+                            state: visible
+                            value: DDR4
+                            imageUrl: null
+                            orderNumber: 10
+                        options:
+                          - label: DDR4
+                            state: visible
+                            value: DDR4
+                            imageUrl: null
+                            orderNumber: 10
+                          - label: DDR5
+                            state: visible
+                            value: DDR5
+                            imageUrl: null
+                            orderNumber: 20
+                      set: ramPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.select
+                      uniqueName: ramPicker-1001-ramPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: ramPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.quantity
+                      uniqueName: ramPicker-1001-ramPicker.quantity
+                      value: 0
+                      step: 1
+                      set: ramPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.imageUrl
+                      uniqueName: ramPicker-1001-ramPicker.imageUrl
+                      value: ""
+                      set: ramPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: ramPicker.storage
+                      uniqueName: ramPicker-1001-ramPicker.storage
+                      value: 0
+                      set: ramPicker
+                      index: 1
+                  label: 16GB RAM Module
+                  state: visible
+                  value: RAM16GB
+                  imageUrl: https://i.imgur.com/WkXo98I.png
+                  orderNumber: 20
+                  productDetails:
+                    price: 125
+                    name: RAM 16GB
+                - index: 2
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: ramPicker.value
+                      uniqueName: ramPicker-1002-ramPicker.value
+                      value: RAM32GB
+                      set: ramPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.interface
+                      uniqueName: ramPicker-1002-ramPicker.interface
+                      value: DDR5
+                      optionSet:
+                        selectedOptions:
+                          - label: DDR5
+                            state: visible
+                            value: DDR5
+                            imageUrl: null
+                            orderNumber: 20
+                        options:
+                          - label: DDR4
+                            state: visible
+                            value: DDR4
+                            imageUrl: null
+                            orderNumber: 10
+                          - label: DDR5
+                            state: visible
+                            value: DDR5
+                            imageUrl: null
+                            orderNumber: 20
+                      set: ramPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.select
+                      uniqueName: ramPicker-1002-ramPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: ramPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.quantity
+                      uniqueName: ramPicker-1002-ramPicker.quantity
+                      value: 0
+                      step: 1
+                      set: ramPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: ramPicker.imageUrl
+                      uniqueName: ramPicker-1002-ramPicker.imageUrl
+                      value: ""
+                      set: ramPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: ramPicker.storage
+                      uniqueName: ramPicker-1002-ramPicker.storage
+                      value: 0
+                      set: ramPicker
+                      index: 2
+                  label: 32GB RAM Module
+                  state: visible
+                  value: RAM32GB
+                  imageUrl: https://i.imgur.com/WkXo98I.png
+                  orderNumber: 30
+                  productDetails:
+                    price: 175
+                    name: RAM 32GB
+              pageable: INSTANCE
+              totalPages: 1
+              totalElements: 3
+              last: true
+              size: 3
+              number: 0
+              sort:
+                empty: true
+                sorted: false
+                unsorted: true
+              numberOfElements: 3
+              first: true
+              empty: false
+          - userEdited: false
+            dataType: array
+            visibilityState: visible
+            editable: "true"
+            variableName: drivePicker
+            uniqueName: drivePicker
+            value: []
+            optionSet:
+              options:
+                - label: SSD128
+                  state: visible
+                  value: SSD128
+                  imageUrl: null
+                  orderNumber: 10
+                - label: SSD256
+                  state: visible
+                  value: SSD256
+                  imageUrl: null
+                  orderNumber: 20
+                - label: SSD512
+                  state: visible
+                  value: SSD512
+                  imageUrl: null
+                  orderNumber: 30
+            selectAll: NONE
+            rows:
+              content:
+                - index: 0
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: drivePicker.value
+                      uniqueName: drivePicker-1000-drivePicker.value
+                      value: SSD128
+                      set: drivePicker
+                      index: 0
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.select
+                      uniqueName: drivePicker-1000-drivePicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: drivePicker
+                      index: 0
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.quantity
+                      uniqueName: drivePicker-1000-drivePicker.quantity
+                      value: 0
+                      set: drivePicker
+                      index: 0
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.interface
+                      uniqueName: drivePicker-1000-drivePicker.interface
+                      value: NVMe
+                      optionSet:
+                        selectedOptions:
+                          - label: NVMe
+                            state: visible
+                            value: NVMe
+                            imageUrl: null
+                            orderNumber: 10
+                        options:
+                          - label: NVMe
+                            state: visible
+                            value: NVMe
+                            imageUrl: null
+                            orderNumber: 10
+                          - label: SSD
+                            state: visible
+                            value: SSD
+                            imageUrl: null
+                            orderNumber: 20
+                      set: drivePicker
+                      index: 0
+                  label: SSD128
+                  state: visible
+                  value: SSD128
+                  imageUrl: null
+                  orderNumber: 10
+                  productDetails:
+                    price: 89
+                    name: NVMe Drive 128GB
+                    description: Lightning fast Storage for all your computing needs
+                - index: 1
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: drivePicker.value
+                      uniqueName: drivePicker-1001-drivePicker.value
+                      value: SSD256
+                      set: drivePicker
+                      index: 1
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.select
+                      uniqueName: drivePicker-1001-drivePicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: drivePicker
+                      index: 1
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.quantity
+                      uniqueName: drivePicker-1001-drivePicker.quantity
+                      value: 0
+                      set: drivePicker
+                      index: 1
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.interface
+                      uniqueName: drivePicker-1001-drivePicker.interface
+                      value: SSD
+                      optionSet:
+                        selectedOptions:
+                          - label: SSD
+                            state: visible
+                            value: SSD
+                            imageUrl: null
+                            orderNumber: 20
+                        options:
+                          - label: NVMe
+                            state: visible
+                            value: NVMe
+                            imageUrl: null
+                            orderNumber: 10
+                          - label: SSD
+                            state: visible
+                            value: SSD
+                            imageUrl: null
+                            orderNumber: 20
+                      set: drivePicker
+                      index: 1
+                  label: SSD256
+                  state: visible
+                  value: SSD256
+                  imageUrl: null
+                  orderNumber: 20
+                  productDetails:
+                    price: 75
+                    name: SSD 256GB
+                    description: A balance of speed and capacity
+                - index: 2
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: drivePicker.value
+                      uniqueName: drivePicker-1002-drivePicker.value
+                      value: SSD512
+                      set: drivePicker
+                      index: 2
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.select
+                      uniqueName: drivePicker-1002-drivePicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: drivePicker
+                      index: 2
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.quantity
+                      uniqueName: drivePicker-1002-drivePicker.quantity
+                      value: 0
+                      set: drivePicker
+                      index: 2
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: drivePicker.interface
+                      uniqueName: drivePicker-1002-drivePicker.interface
+                      value: SSD
+                      optionSet:
+                        selectedOptions:
+                          - label: SSD
+                            state: visible
+                            value: SSD
+                            imageUrl: null
+                            orderNumber: 20
+                        options:
+                          - label: NVMe
+                            state: visible
+                            value: NVMe
+                            imageUrl: null
+                            orderNumber: 10
+                          - label: SSD
+                            state: visible
+                            value: SSD
+                            imageUrl: null
+                            orderNumber: 20
+                      set: drivePicker
+                      index: 2
+                  label: SSD512
+                  state: visible
+                  value: SSD512
+                  imageUrl: null
+                  orderNumber: 30
+                  productDetails:
+                    price: 150
+                    name: SSD 512GB
+                    description: Bulk SSD Storage for large files
+              pageable: INSTANCE
+              totalPages: 1
+              totalElements: 3
+              last: true
+              size: 3
+              number: 0
+              sort:
+                empty: true
+                sorted: false
+                unsorted: true
+              numberOfElements: 3
+              first: true
+              empty: false
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: cpuPicker
+            uniqueName: cpuPicker
+            value: ""
+            optionSet:
+              options:
+                - label: Dual Core Processor
+                  state: visible
+                  value: CPU16GHZI5
+                  imageUrl: https://i.imgur.com/ftft5Nx.png
+                  orderNumber: 10
+                - label: Quad Core Processor
+                  state: visible
+                  value: CPU22GHZI7
+                  imageUrl: https://i.imgur.com/ftft5Nx.png
+                  orderNumber: 20
+                - label: 6-Core Processor
+                  state: visible
+                  value: CPU28GHZI7
+                  imageUrl: https://i.imgur.com/0xQH6mZ.png
+                  orderNumber: 30
+                - label: 8-Core Processor
+                  state: visible
+                  value: CPU7320GHZRYZ3
+                  imageUrl: https://i.imgur.com/0xQH6mZ.png
+                  orderNumber: 40
+                - label: 12-Core Processor
+                  state: visible
+                  value: CPU7550GHZRYZ5
+                  imageUrl: https://i.imgur.com/LaQVZma.png
+                  orderNumber: 50
+            rows:
+              content:
+                - index: 0
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: cpuPicker.value
+                      uniqueName: cpuPicker-1000-cpuPicker.value
+                      value: CPU16GHZI5
+                      set: cpuPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.select
+                      uniqueName: cpuPicker-1000-cpuPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: cpuPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.quantity
+                      uniqueName: cpuPicker-1000-cpuPicker.quantity
+                      value: 0
+                      step: 1
+                      set: cpuPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.imageUrl
+                      uniqueName: cpuPicker-1000-cpuPicker.imageUrl
+                      value: ""
+                      set: cpuPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.description
+                      uniqueName: cpuPicker-1000-cpuPicker.description
+                      value: Processor for light computing
+                      set: cpuPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.price
+                      uniqueName: cpuPicker-1000-cpuPicker.price
+                      value: 100
+                      set: cpuPicker
+                      index: 0
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.watts
+                      uniqueName: cpuPicker-1000-cpuPicker.watts
+                      value: 75
+                      set: cpuPicker
+                      index: 0
+                  label: Dual Core Processor
+                  state: visible
+                  value: CPU16GHZI5
+                  imageUrl: https://i.imgur.com/ftft5Nx.png
+                  orderNumber: 10
+                  productDetails:
+                    name: CPU 1.6GHz i5
+                - index: 1
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: cpuPicker.value
+                      uniqueName: cpuPicker-1001-cpuPicker.value
+                      value: CPU22GHZI7
+                      set: cpuPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.select
+                      uniqueName: cpuPicker-1001-cpuPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: cpuPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.quantity
+                      uniqueName: cpuPicker-1001-cpuPicker.quantity
+                      value: 0
+                      step: 1
+                      set: cpuPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.imageUrl
+                      uniqueName: cpuPicker-1001-cpuPicker.imageUrl
+                      value: ""
+                      set: cpuPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.description
+                      uniqueName: cpuPicker-1001-cpuPicker.description
+                      value: Processor for light computing and office work
+                      set: cpuPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.price
+                      uniqueName: cpuPicker-1001-cpuPicker.price
+                      value: 125
+                      set: cpuPicker
+                      index: 1
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.watts
+                      uniqueName: cpuPicker-1001-cpuPicker.watts
+                      value: 100
+                      set: cpuPicker
+                      index: 1
+                  label: Quad Core Processor
+                  state: visible
+                  value: CPU22GHZI7
+                  imageUrl: https://i.imgur.com/ftft5Nx.png
+                  orderNumber: 20
+                  productDetails:
+                    name: CPU 2.2GHz i7
+                - index: 2
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: cpuPicker.value
+                      uniqueName: cpuPicker-1002-cpuPicker.value
+                      value: CPU28GHZI7
+                      set: cpuPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.select
+                      uniqueName: cpuPicker-1002-cpuPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: cpuPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.quantity
+                      uniqueName: cpuPicker-1002-cpuPicker.quantity
+                      value: 0
+                      step: 1
+                      set: cpuPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.imageUrl
+                      uniqueName: cpuPicker-1002-cpuPicker.imageUrl
+                      value: ""
+                      set: cpuPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.description
+                      uniqueName: cpuPicker-1002-cpuPicker.description
+                      value: Perfect for moderate computing tasks
+                      set: cpuPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.price
+                      uniqueName: cpuPicker-1002-cpuPicker.price
+                      value: 175
+                      set: cpuPicker
+                      index: 2
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.watts
+                      uniqueName: cpuPicker-1002-cpuPicker.watts
+                      value: 125
+                      set: cpuPicker
+                      index: 2
+                  label: 6-Core Processor
+                  state: visible
+                  value: CPU28GHZI7
+                  imageUrl: https://i.imgur.com/0xQH6mZ.png
+                  orderNumber: 30
+                  productDetails:
+                    name: CPU 2.8GHz i7
+                - index: 3
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: cpuPicker.value
+                      uniqueName: cpuPicker-1003-cpuPicker.value
+                      value: CPU7320GHZRYZ3
+                      set: cpuPicker
+                      index: 3
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.select
+                      uniqueName: cpuPicker-1003-cpuPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: cpuPicker
+                      index: 3
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.quantity
+                      uniqueName: cpuPicker-1003-cpuPicker.quantity
+                      value: 0
+                      step: 1
+                      set: cpuPicker
+                      index: 3
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.imageUrl
+                      uniqueName: cpuPicker-1003-cpuPicker.imageUrl
+                      value: ""
+                      set: cpuPicker
+                      index: 3
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.description
+                      uniqueName: cpuPicker-1003-cpuPicker.description
+                      value: Great 3D and Video editing capabilities
+                      set: cpuPicker
+                      index: 3
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.price
+                      uniqueName: cpuPicker-1003-cpuPicker.price
+                      value: 225
+                      set: cpuPicker
+                      index: 3
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.watts
+                      uniqueName: cpuPicker-1003-cpuPicker.watts
+                      value: 150
+                      set: cpuPicker
+                      index: 3
+                  label: 8-Core Processor
+                  state: visible
+                  value: CPU7320GHZRYZ3
+                  imageUrl: https://i.imgur.com/0xQH6mZ.png
+                  orderNumber: 40
+                  productDetails:
+                    name: AMD Ryzen 3 7320U
+                - index: 4
+                  fields:
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "false"
+                      variableName: cpuPicker.value
+                      uniqueName: cpuPicker-1004-cpuPicker.value
+                      value: CPU7550GHZRYZ5
+                      set: cpuPicker
+                      index: 4
+                    - userEdited: false
+                      dataType: boolean
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.select
+                      uniqueName: cpuPicker-1004-cpuPicker.select
+                      value: false
+                      optionSet:
+                        options:
+                          - label: "true"
+                            state: visible
+                            value: "true"
+                            imageUrl: null
+                            orderNumber: null
+                          - label: "false"
+                            state: visible
+                            value: "false"
+                            imageUrl: null
+                            orderNumber: null
+                      set: cpuPicker
+                      index: 4
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.quantity
+                      uniqueName: cpuPicker-1004-cpuPicker.quantity
+                      value: 0
+                      step: 1
+                      set: cpuPicker
+                      index: 4
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.imageUrl
+                      uniqueName: cpuPicker-1004-cpuPicker.imageUrl
+                      value: ""
+                      set: cpuPicker
+                      index: 4
+                    - userEdited: false
+                      dataType: text
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.description
+                      uniqueName: cpuPicker-1004-cpuPicker.description
+                      value: Top of the line processor for AI, number crunching and cryptography
+                      set: cpuPicker
+                      index: 4
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.price
+                      uniqueName: cpuPicker-1004-cpuPicker.price
+                      value: 325
+                      set: cpuPicker
+                      index: 4
+                    - userEdited: false
+                      dataType: number
+                      visibilityState: visible
+                      editable: "true"
+                      variableName: cpuPicker.watts
+                      uniqueName: cpuPicker-1004-cpuPicker.watts
+                      value: 225
+                      set: cpuPicker
+                      index: 4
+                  label: 12-Core Processor
+                  state: visible
+                  value: CPU7550GHZRYZ5
+                  imageUrl: https://i.imgur.com/LaQVZma.png
+                  orderNumber: 50
+                  productDetails:
+                    name: AMD Ryzen 5 7550U
+              pageable: INSTANCE
+              totalPages: 1
+              totalElements: 5
+              last: true
+              size: 5
+              number: 0
+              sort:
+                empty: true
+                sorted: false
+                unsorted: true
+              numberOfElements: 5
+              first: true
+              empty: false
+          - userEdited: false
+            dataType: set
+            visibilityState: visible
+            editable: "true"
+            variableName: delta
+            uniqueName: delta
+            rows:
+              content: []
+              pageable: INSTANCE
+              totalPages: 1
+              totalElements: 0
+              last: true
+              size: 0
+              number: 0
+              sort:
+                empty: true
+                sorted: false
+                unsorted: true
+              numberOfElements: 0
+              first: true
+              empty: true
+          - userEdited: false
+            dataType: number
+            visibilityState: visible
+            editable: "false"
+            variableName: ramPicker.aggregates.storage_sum
+            uniqueName: ramPicker.aggregates.storage_sum
+            value: 0
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productDescription
+            uniqueName: sys.productDescription
+            value: ""
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productUOM
+            uniqueName: sys.productUOM
+            value: ""
+          - userEdited: false
+            dataType: number
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productPrice
+            uniqueName: sys.productPrice
+            value: 0
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productId
+            uniqueName: sys.productId
+            value: SWC
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.actionContext
+            uniqueName: sys.actionContext
+            value: ""
+          - userEdited: false
+            dataType: number
+            visibilityState: visible
+            editable: "true"
+            variableName: set.delta.size
+            uniqueName: set.delta.size
+            value: []
+          - userEdited: false
+            dataType: number
+            visibilityState: visible
+            editable: "false"
+            variableName: set.delta.priceSum
+            uniqueName: set.delta.priceSum
+            value: 0
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productName
+            uniqueName: sys.productName
+            value: Laptop Configurator
+          - userEdited: false
+            dataType: number
+            visibilityState: visible
+            editable: "false"
+            variableName: cpuPicker.aggregates.watts_sum
+            uniqueName: cpuPicker.aggregates.watts_sum
+            value: 0
+          - userEdited: false
+            dataType: number
+            visibilityState: visible
+            editable: "false"
+            variableName: ramPicker.aggregates.value_count
+            uniqueName: ramPicker.aggregates.value_count
+            value: 0
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: pleExtension
+            uniqueName: pleExtension
+            value: SSM
+            optionSet:
+              selectedOptions:
+                - label: Single
+                  state: visible
+                  value: SSM
+                  imageUrl: null
+                  orderNumber: 10
+              options:
+                - label: Single
+                  state: visible
+                  value: SSM
+                  imageUrl: null
+                  orderNumber: 10
+                - label: Dual
+                  state: visible
+                  value: DSM
+                  imageUrl: null
+                  orderNumber: 20
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: partner.quote.currencyIsoCode
+            uniqueName: partner.quote.currencyIsoCode
+            value: USD
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productFamily
+            uniqueName: sys.productFamily
+            value: Software
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: partner.quote.lineId
+            uniqueName: partner.quote.lineId
+            value: ""
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.currentDate
+            uniqueName: sys.currentDate
+            value: 2023-09-29
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: cPUType
+            uniqueName: cPUType
+            value: All
+            optionSet:
+              selectedOptions:
+                - label: All
+                  state: visible
+                  value: All
+                  imageUrl: null
+                  orderNumber: 5
+              options:
+                - label: All
+                  state: visible
+                  value: All
+                  imageUrl: null
+                  orderNumber: 5
+                - label: Low
+                  state: visible
+                  value: Low
+                  imageUrl: null
+                  orderNumber: 7
+                - label: Mid
+                  state: visible
+                  value: Mid
+                  imageUrl: null
+                  orderNumber: 8
+                - label: High
+                  state: visible
+                  value: High
+                  imageUrl: null
+                  orderNumber: 9
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: preconfigured
+            uniqueName: preconfigured
+            value: ""
+            optionSet:
+              options:
+                - label: Basic Office
+                  state: visible
+                  value: Basic
+                  imageUrl: null
+                  orderNumber: 10
+                - label: Video and 3D
+                  state: visible
+                  value: 3D
+                  imageUrl: null
+                  orderNumber: 20
+                - label: Enthusiast
+                  state: visible
+                  value: Max
+                  imageUrl: null
+                  orderNumber: 30
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: sys.productCode
+            uniqueName: sys.productCode
+            value: SWC
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: partner.quote.pricebookId
+            uniqueName: partner.quote.pricebookId
+            value: ""
+          - userEdited: false
+            dataType: text
+            visibilityState: visible
+            editable: "true"
+            variableName: partner.quote.id
+            uniqueName: partner.quote.id
+            value: ""
+        uuid: ad947503-5246-461f-8603-f0124593ae1c
+        revision: 0
+        relatedChanges:
+          - key: drivePicker
+            type: PRODUCT_PICKER
+          - key: ramPicker
+            type: PRODUCT_PICKER
+          - key: cpuPicker
+            type: PRODUCT_PICKER
+          - key: delta
+            type: SET
+          - key: products
+            type: PRODUCT
+        valid: true
+        messages: []
+        productChange: true
+        products:
+          - id: SSM
+            quantity: 1
+            bomType: Sales
+            price: 125
+            uniqueIdentifier: motherboard
+            orderNumber: 10
+            type: accessory
+            name: Single Motherboard
+            partnerId: 01t6e000009gRTpAAM
+            productCode: SSM
+            externalId: ""
+            productFamily: ""
+            description: ""
+            uom: ""
+            extPrice: 125
+            level: 0
+            rollUpPrice: 125
+        showValidationButton: false
+        total: 125
+        layouts:
+          - url: /blueprints/8/revisions/LATEST/layouts/1
+            label: basic
+            variableName: pickerGeneral_basic
+
+  securitySchemes:
+    RuntimeTokenBearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        Runtime Token to use for requests. Created in the Logik.io Admin, under Runtime Clients. 
+
+        Must also be configured to allow the Origin that is passed as a Header parameter in all requests.

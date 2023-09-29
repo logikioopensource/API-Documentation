@@ -88,11 +88,33 @@ For using each of the APIs, please see the [Logik.io Support site for detailed R
 
 ### Swagger (OpenAPI) Documentation
 
-A Swagger (OpenAPI) file documenting the Logik Runtime APIs, with example responses and schema(s) supported.
+Swagger (OpenAPI) file documenting the Logik Runtime APIs, with example responses and schema(s) supported.
 
-[Logik Swagger Runtime File](/runtime/RuntimeAPIs.yml)
+#### Important Versioning Information
 
-This Swagger file has 3 sections, mostly overlapping with the Postman collection as well.
+Blueprints that use Product Picker Fields ***must*** use the `application/vnd.logik.cfg-v2+json` Content-Type when making requests.
+
+The Runtime APIs are versioned using different Content-Types. There are 2 Content-Type formats, `application/json` for v1 and `application/vnd.logik.cfg-v2+json` for v2.
+
+- `application/json` can be used with regular Logik field types (number, boolean, text and picklist) and sets.
+- `application/vnd.logik.cfg-v2+json` can be used with all regular field types as well as Product Picker Fields.
+  
+The Accept Header should match the Content-Type being used, either:
+
+- `application/json` for v1.
+- `application/vnd.logik.cfg-v2+json, application/json` for v2.
+
+##### [Logik Swagger Runtime File v1](/runtime/RuntimeAPIs.yml)
+
+  This Swagger file uses the v1 format of the Logik Configuration APIs, with Content-Type and Accept headers of `application/json`
+
+- Configuration APIs: Working with Logik Configurations, supporting common CRUD actions.
+- BOM APIs: Getting Bill of Materials (BOM) data from Logik, based on a specific Configuration Id.
+- Schemas: Schemas that different parts of the API uses.
+
+##### [Logik Swagger Runtime File v2](/runtime/Runtime_v2.yml)
+
+  This Swagger file uses the v2 format of the Logik Configuration APIs, with Content-Type and Accept headers of `application/vnd.logik.cfg-v2+json`
 
 - Configuration APIs: Working with Logik Configurations, supporting common CRUD actions.
 - BOM APIs: Getting Bill of Materials (BOM) data from Logik, based on a specific Configuration Id.
